@@ -4,10 +4,12 @@ const app  = express();
 const cors = require('cors');
 const sequelize = require('./util/database');
 const bodyParser = require('body-parser');
+const bcrypt = require('bcrypt');
 
 
 //models
 const Users = require('./models/expenseTrackerProject');
+const { error } = require('console');
 
 app.use(bodyParser.json());
 app.use(cors());
@@ -31,7 +33,7 @@ app.post('/signUp', async(req,res,next)=>{
 
         }
 
-        // Check if the email already exists
+         // Check if the email already exists
         const existingUser = await Users.findOne({
             where: {
                 email: email
@@ -40,46 +42,32 @@ app.post('/signUp', async(req,res,next)=>{
 
         if (existingUser) {
             return res.status(400).json({message : "Email already exists"})
-        }
+        } 
 
-        const data = await Users.create({
+        bcrypt.hash(password, 10, async(error, hash)=>{
+            const data = await Users.create({
+                name : name,
+                email : email,
+                passWord : hash
+
+            })
+
+        })
+        return res.status(201).json({msg: "sign up successfull"})
+
+       /*  const data = await Users.create({
             name : name,
             email : email,
             passWord : password
         });
 
-        return res.status(201).json({userDetails : data, msg: "sign up successfull"})
+        return res.status(201).json({userDetails : data, msg: "sign up successfull"}) */
 
     }catch(error){
         return res.status(500).json({error : error.message})
     }
 
 });
-
-/* app.post('/login', async(req,res,next)=>{
-    
-    try{
-        
-        const email = req.body.email;
-        const password = req.body.password;
-        const loginCredentials = await Users.findAll({
-            where : {email : email}
-        })
-        if (loginCredentials.length >0){
-            if(loginCredentials[0].passWord === password){
-                res.status(200).json({msg : "user logged in successfully"})
-            }else{
-                res.status(400).json({msg : 'password incorrect'})
-            }
-        }else{
-            res.status(404).json({msg : "user doesn't exist"})
-        }
-
-    }catch(error){
-        res.status(500).json({message : error.message})
-
-    }
-}); */
 
 app.post('/login', async (req, res, next) => {
     try {

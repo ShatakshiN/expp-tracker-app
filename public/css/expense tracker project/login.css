@@ -1,0 +1,15 @@
+.navbar{
+    background-color: rgb(150, 148, 148);
+}
+.offcanvas-body{
+    font-size: large;
+    font-weight: bold;
+    color: white;
+}
+
+#headingContainer{
+    margin-top: 5rem;
+}
+#formContainer{
+    margin-top: 4rem;
+}

@@ -83,7 +83,23 @@ app.post('/login', async (req, res, next) => {
             where: { email: email }
         });
 
-        if (loginCredentials.length > 0) {
+        if(loginCredentials.length > 0){
+            bcrypt.compare(password, loginCredentials[0].passWord, (err, result )=>{ //the result will be true / false
+                if(err){
+                    res.status(500).json({msg : "something went wrong"})
+                }
+                if(result === true){
+                    res.status(200).json({msg: "user logged in successfully" })
+                }else {
+                    return res.status(400).json({ msg: 'password incorrect' });
+                }
+            })
+        }else {
+            return res.status(404).json({ msg: "user doesn't exist" });
+        }
+
+        /* if (loginCredentials.length > 0) {
+
             if (loginCredentials[0].passWord === password) {
                 return res.status(200).json({ msg: "user logged in successfully" });
             } else {
@@ -91,7 +107,7 @@ app.post('/login', async (req, res, next) => {
             }
         } else {
             return res.status(404).json({ msg: "user doesn't exist" });
-        }
+        } */
     } catch (error) {
         return res.status(500).json({ message: error.message });
     }

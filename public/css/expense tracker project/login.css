@@ -1,5 +1,10 @@
 .navbar{
     background-color: rgb(150, 148, 148);
+    font-weight: bolder;
+   
+}
+#h1{
+    vertical-align: text-top;
 }
 .offcanvas-body{
     font-size: large;

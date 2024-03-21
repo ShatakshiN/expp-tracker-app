@@ -8,8 +8,10 @@ const bcrypt = require('bcrypt');
 
 
 //models
-const Users = require('./models/expenseTrackerProject');
+const Users = require('./models/users');
+const Expense = require('./models/expense');
 const { error } = require('console');
+
 
 app.use(bodyParser.json());
 app.use(cors());
@@ -45,7 +47,7 @@ app.post('/signUp', async(req,res,next)=>{
         } 
 
         bcrypt.hash(password, 10, async(error, hash)=>{
-            const data = await Users.create({
+            const userData = await Users.create({
                 name : name,
                 email : email,
                 passWord : hash
@@ -55,13 +57,7 @@ app.post('/signUp', async(req,res,next)=>{
         })
         return res.status(201).json({msg: "sign up successfull"})
 
-       /*  const data = await Users.create({
-            name : name,
-            email : email,
-            passWord : password
-        });
-
-        return res.status(201).json({userDetails : data, msg: "sign up successfull"}) */
+       
 
     }catch(error){
         return res.status(500).json({error : error.message})
@@ -97,25 +93,38 @@ app.post('/login', async (req, res, next) => {
         }else {
             return res.status(404).json({ msg: "user doesn't exist" });
         }
-
-        /* if (loginCredentials.length > 0) {
-
-            if (loginCredentials[0].passWord === password) {
-                return res.status(200).json({ msg: "user logged in successfully" });
-            } else {
-                return res.status(400).json({ msg: 'password incorrect' });
-            }
-        } else {
-            return res.status(404).json({ msg: "user doesn't exist" });
-        } */
     } catch (error) {
         return res.status(500).json({ message: error.message });
     }
 });
 
+app.post('/add-expense', async(req,res,next)=>{
 
+    try{
+        const description = req.body.description;
+        const amount = req.body.amount;
+        const date = req.body.date;
+        const category = req.body.category;
 
+        const data = await Expense.create({
+            date : date,
+            description: description,
+            amount : amount,
+            category : category,
+            expenseId : userData.id           
+        })
+        //await Expense.setUsers(userData)
 
+        res.status(201).json({expense:data})       
+
+    }
+    catch(error){
+        res.status(500),json({message : error})
+    }
+})
+
+Expense.belongsTo(Users,{constraints: true, onDelete: 'CASCADE'});
+Users.hasMany(Expense);
 
 sequelize.sync()
     .then(()=>{

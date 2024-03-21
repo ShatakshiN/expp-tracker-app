@@ -31,14 +31,14 @@
               Date: <input type="date" name="date">              
           </div>
           <div class="col-sm">
-            <input type="text" class="form-control" placeholder="Description" aria-label="City">
+            <input type="text" class="form-control" placeholder="Description" name="description" id="desTag">
           </div>
           <div class="col-sm">
-            <input type="number" class="form-control" placeholder="Amount" aria-label="State">
+            <input type="number" class="form-control" placeholder="Amount" name="amount" id="amountTag" >
           </div>
           <div class="col-sm">
             <label class="visually-hidden" for="autoSizingSelect">Preference</label>
-            <select class="form-select" id="autoSizingSelect">
+            <select class="form-select" id="autoSizingSelect" name='categories'>
               <option selected>Categories...</option>
               <option value="1">Food</option>
               <option value="2">Education</option>
@@ -56,6 +56,10 @@
         </div>
 
     </form>
+    <ul class="list-group col-10" id="expenseList">
+      <!--li class="list-group-item ">A second item</li>
+      <li class="list-group-item">A third item</li-->
+    </ul>
   </div>
 
   <script src="features.js"></script>

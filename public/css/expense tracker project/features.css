@@ -5,11 +5,13 @@
   margin-inline-start: 60rem;
   width: 100px;
 }
-
 #form{
   margin-left: 8rem;
+  margin-top: 5rem;
 }
-
 .btn{
   margin-right: 20rem;
+}
+.list-group{
+  margin-top: 5rem;
 }

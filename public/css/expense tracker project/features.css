@@ -5,7 +5,11 @@
   margin-inline-start: 60rem;
   width: 100px;
 }
-#addExpense{
-  margin-inline-start: 28rem;
-  margin-top: 4rem;
+
+#form{
+  margin-left: 8rem;
+}
+
+.btn{
+  margin-right: 20rem;
 }

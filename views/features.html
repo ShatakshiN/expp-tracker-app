@@ -15,6 +15,19 @@
         Expense Tracker
       </a>
       <!-- Moved the navbar-nav div here and added ms-auto class -->
+      <nav aria-label="Page navigation example">
+        <ul class="pagination justify-content-center">
+          <li class="page-item disabled">
+            <a class="page-link">Previous</a>
+          </li>
+          <li class="page-item"><a class="page-link" href="#">1</a></li>
+          <li class="page-item"><a class="page-link" href="#">2</a></li>
+          <li class="page-item"><a class="page-link" href="#">3</a></li>
+          <li class="page-item">
+            <a class="page-link" href="#">Next</a>
+          </li>
+        </ul>
+      </nav>
       <div class="collapse navbar-collapse w-50 " id="navbarNavAltMarkup">
         <div class="navbar-nav">
           <a class="nav-link active" aria-current="page" href="#">DAILY</a>
@@ -25,10 +38,10 @@
     </div>
   </nav>
   <div class="container-fluid" id="form">
-    <form action="post" class="col-10 mt-5 mx-auto ">
+    <form action="post" class="col-10 mt-5 mx-auto" onsubmit="sendData(event)">
       <div class="row text-center">
-          <div class="col-sm" id="date">
-              Date: <input type="date" name="date">              
+          <div class="col-sm">
+              Date: <input type="date" name="date" id="dateField">              
           </div>
           <div class="col-sm">
             <input type="text" class="form-control" placeholder="Description" name="description" id="desTag">
@@ -54,7 +67,7 @@
           </div>
 
         </div>
-
+      </div>
     </form>
     <ul class="list-group col-10" id="expenseList">
       <!--li class="list-group-item ">A second item</li>

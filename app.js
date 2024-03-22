@@ -98,7 +98,7 @@ app.post('/login', async (req, res, next) => {
     }
 });
 
-app.post('/add-expense', async(req,res,next)=>{
+app.post('/daily-expense', async(req,res,next)=>{
 
     try{
         const description = req.body.description;

@@ -5,11 +5,18 @@ async function sendData(event){
     const amount = event.target.amount.value;
     const category = event.target.categories.value;
 
+    // Extract user ID from URL and parse it as integer
+    const urlParams = new URLSearchParams(window.location.search);
+    console.log(urlParams)
+    const userId = parseInt(urlParams.get('id')); // Parse userId as integer
+    console.log(userId)
+
     obj = {
         date,
         description,
         amount,
-        category
+        category,
+        userId
     }
 
     try{
@@ -23,6 +30,6 @@ async function sendData(event){
 };
 
 function showExpenseOnScreen(obj){
-    
+
 
 }

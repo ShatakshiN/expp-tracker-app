@@ -3,7 +3,7 @@ svg.bi {
   color: rgb(255, 254, 254); /* Change color to red */
 }
 body{
-  background: url('./photo-1638864616275-9f0b291a2eb6.avif') rgb(0, 0,0,0.3) ;
+  background: url('./photo.avif') rgb(0, 0,0,0.3) ;
   background-blend-mode: multiply;
   background-position: center;
   background-size: cover;
@@ -16,7 +16,7 @@ body{
   }
 }
 #form{
-  margin-top: 5rem;
+  margin-top: 5rem; 
   justify-content: center;
   align-items: center;
   margin-left: 7rem;

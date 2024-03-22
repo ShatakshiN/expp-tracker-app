@@ -23,5 +23,6 @@ async function sendData(event){
 };
 
 function showExpenseOnScreen(obj){
+    
 
 }

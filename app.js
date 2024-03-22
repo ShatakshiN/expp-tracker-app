@@ -110,8 +110,8 @@ app.post('/daily-expense', async(req,res,next)=>{
             date : date,
             description: description,
             amount : amount,
-            category : category,
-            expenseId : userData.id           
+            category : category
+                     
         })
         //await Expense.setUsers(userData)
 

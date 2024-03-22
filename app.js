@@ -55,7 +55,7 @@ app.post('/signUp', async(req,res,next)=>{
             })
 
         })
-        return res.status(201).json({msg: "sign up successfull"})
+        return res.status(201).json({msg: "sign up successful"})
 
        
 
@@ -70,6 +70,7 @@ app.post('/login', async (req, res, next) => {
         
         const email = req.body.email;
         const password = req.body.password;
+       
 
         if(isStrValid(email) || isStrValid(password)){
             return req.status(400).json({message : "bad parameters"})
@@ -85,7 +86,7 @@ app.post('/login', async (req, res, next) => {
                     res.status(500).json({msg : "something went wrong"})
                 }
                 if(result === true){
-                    res.status(200).json({msg: "user logged in successfully" })
+                    res.status(200).json({msg: "user logged in successfully",id: loginCredentials[0].id })
                 }else {
                     return res.status(400).json({ msg: 'password incorrect' });
                 }
@@ -105,12 +106,14 @@ app.post('/daily-expense', async(req,res,next)=>{
         const amount = req.body.amount;
         const date = req.body.date;
         const category = req.body.category;
+        const id = req.body.userId;
 
         const data = await Expense.create({
             date : date,
             description: description,
             amount : amount,
-            category : category
+            category : category,
+            SignUpId : id
                      
         })
         //await Expense.setUsers(userData)

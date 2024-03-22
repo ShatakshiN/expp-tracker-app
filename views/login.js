@@ -9,7 +9,10 @@ async function sendData(event){
     }
 
     try{
-        const response  = await axios.post('http://localhost:4000/login',obj);      
+        const response  = await axios.post('http://localhost:4000/login',obj);  
+        if (response.status ===200){
+            window.location.href = 'daily.html'
+        }    
     }
     catch(error){
         console.log(error)

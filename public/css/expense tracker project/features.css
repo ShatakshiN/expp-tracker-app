@@ -1,16 +1,35 @@
-.navbar{
-  background-color:rgb(150, 148, 148);
+
+svg.bi {
+  color: rgb(255, 254, 254); /* Change color to red */
 }
-#navbarNavAltMarkup{
-  margin-inline-start: 60rem;
-  width: 100px;
+body{
+  background: url('./photo-1638864616275-9f0b291a2eb6.avif') rgb(0, 0,0,0.3) ;
+  background-blend-mode: multiply;
+  background-position: center;
+  background-size: cover;
+  background-repeat: no-repeat;
+}
+@media (max-width:991px){
+  .sidebar{
+    background-color: rgb(225, 225,225,0.15);
+    backdrop-filter: blur(10px);
+  }
 }
 #form{
-  margin-left: 8rem;
   margin-top: 5rem;
+  justify-content: center;
+  align-items: center;
+  margin-left: 7rem;
 }
+#form input[type="date"] {
+  margin-left: 5rem; /* Adjust as needed */
+  height: 2rem;
+}
+
 .btn{
   margin-right: 20rem;
+  font-size: large;
+  font-weight: bold;
 }
 .list-group{
   margin-top: 5rem;

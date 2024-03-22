@@ -1,81 +1,91 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-  <link rel="stylesheet" href="../public/css/expense tracker project/features.css">
-  <title>main page</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link rel="stylesheet" href="../public/css/expense tracker project/features.css">
+    <title>Daily Expense</title>
 </head>
-<body>
-  <nav class="navbar navbar-expand-lg ">
-    <div class="container-fluid">
-      <a class="navbar-brand" href="signUp.html">
-        <img src="../../public/css/expense tracker project/calculator.svg" alt="Logo" width="40" height="40" class="d-inline-block align-text-center">
-        Expense Tracker
-      </a>
-      <!-- Moved the navbar-nav div here and added ms-auto class -->
-      <nav aria-label="Page navigation example">
-        <ul class="pagination justify-content-center">
-          <li class="page-item disabled">
-            <a class="page-link">Previous</a>
-          </li>
-          <li class="page-item"><a class="page-link" href="#">1</a></li>
-          <li class="page-item"><a class="page-link" href="#">2</a></li>
-          <li class="page-item"><a class="page-link" href="#">3</a></li>
-          <li class="page-item">
-            <a class="page-link" href="#">Next</a>
-          </li>
+<body class="vh-100 overflow-hidden">
+    <nav class="navbar navbar-expand-lg  navbar-dark ">
+        <div class="container">
+            <a class="navbar-brand fs-4">
+                <!-- SVG logo -->
+                <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor" class="bi bi-calculator-fill" viewBox="0 0 16 16">
+                    <path d="M2 2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2zm2 .5v2a.5.5 0 0 0 .5.5h7a.5.5 0 0 0 .5-.5v-2a.5.5 0 0 0-.5-.5h-7a.5.5 0 0 0-.5.5m0 4v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5M4.5 9a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5M4 12.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5M7.5 6a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5zM7 9.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5m.5 2.5a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5zM10 6.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5m.5 2.5a.5.5 0 0 0-.5.5v4a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-4a.5.5 0 0 0-.5-.5z"/>
+                </svg>
+                Expense Tracker
+            </a>
+            <button class="navbar-toggler shadow-none border-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar" aria-controls="offcanvasNavbar" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="sidebar offcanvas offcanvas-start" tabindex="-1" id="offcanvasNavbar" aria-labelledby="offcanvasNavbarLabel">
+                <div class="offcanvas-header text-white border-bottom">
+                    <h5 class="offcanvas-title" id="offcanvasNavbarLabel">Offcanvas</h5>
+                    <button type="button" class="btn-close btn-close-white shadow-none" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                </div>
+                <div class="offcanvas-body d-flex flex-column flex-lg-row p-4 p-lg-0">
+                    <ul class="navbar-nav justify-content-center align-item-center fs-5 flex-grow-1 pe-3">
+                        <li class="nav-item mx-2">
+                            <a class="nav-link active" aria-current="page" href="#">DAILY</a>
+                        </li>
+                        <li class="nav-item mx-2">
+                            <a class="nav-link" href="#">MONTHLY</a>
+                        </li>
+                        <li class="nav-item mx-2">
+                            <a class="nav-link" href="#">YEARLY</a>
+                        </li>
+                    </ul>
+                    <div class="d-flex flex-column justify-content-center align-item-center ">
+                        <a href="./login.html" class="text-white">LOGOUT</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+    <div class="container-fluid" id="form">
+        <form action="post" class="col" onsubmit="sendData(event)">
+            <div class="row col-12" id="formFields">
+              <div class="col-sm">
+                <input type="date" name="date" >              
+              </div>
+              <div class="col-sm">
+                <input type="text" class="form-control" placeholder="Description" name="description" id="desTag">
+              </div>
+              <div class="col-sm">
+                <input type="text" class="form-control" placeholder="Description" name="description" id="desTag">
+              </div>
+              <div class="col-sm">
+                <input type="number" class="form-control" placeholder="Amount" name="amount" id="amountTag" >
+              </div>
+              <div class="col-sm">
+                <label class="visually-hidden" for="autoSizingSelect">Preference</label>
+                <select class="form-select" id="autoSizingSelect" name='categories'>
+                  <option selected>Categories...</option>
+                  <option value="1">Food</option>
+                  <option value="2">Education</option>
+                  <option value="3">Medical</option>
+                  <option value="4">Recreational Activities</option>
+                  <option value="5">Rent</option>
+                  <option value="6">EMIs</option>
+                  <option value="7">Miscellaneous</option>
+                </select>
+              </div>
+              <div class="col-sm">
+                <button type="submit" class="btn btn-dark opacity=5 me--1.5rem">+</button>
+              </div>
+            </div>
+          </div>
+        </form>
+        <ul class="list-group col-10" id="expenseList">
+          <!--li class="list-group-item ">A second item</li>
+          <li class="list-group-item">A third item</li-->
         </ul>
-      </nav>
-      <div class="collapse navbar-collapse w-50 " id="navbarNavAltMarkup">
-        <div class="navbar-nav">
-          <a class="nav-link active" aria-current="page" href="#">DAILY</a>
-          <a class="nav-link active" href="#">WEEKLY</a>
-          <a class="nav-link active" href="#">MONTHLY</a> 
-        </div>
-      </div> 
     </div>
-  </nav>
-  <div class="container-fluid" id="form">
-    <form action="post" class="col-10 mt-5 mx-auto" onsubmit="sendData(event)">
-      <div class="row text-center">
-          <div class="col-sm">
-              Date: <input type="date" name="date" id="dateField">              
-          </div>
-          <div class="col-sm">
-            <input type="text" class="form-control" placeholder="Description" name="description" id="desTag">
-          </div>
-          <div class="col-sm">
-            <input type="number" class="form-control" placeholder="Amount" name="amount" id="amountTag" >
-          </div>
-          <div class="col-sm">
-            <label class="visually-hidden" for="autoSizingSelect">Preference</label>
-            <select class="form-select" id="autoSizingSelect" name='categories'>
-              <option selected>Categories...</option>
-              <option value="1">Food</option>
-              <option value="2">Education</option>
-              <option value="3">Medical</option>
-              <option value="4">Recreational Activities</option>
-              <option value="5">Rent</option>
-              <option value="6">EMIs</option>
-              <option value="7">Miscellaneous</option>
-            </select>
-          </div>
-          <div class="col-sm">
-            <button type="submit" class="btn btn-dark me--1.5rem">+</button>
-          </div>
-
-        </div>
-      </div>
-    </form>
-    <ul class="list-group col-10" id="expenseList">
-      <!--li class="list-group-item ">A second item</li>
-      <li class="list-group-item">A third item</li-->
-    </ul>
-  </div>
-
-  <script src="daily.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.6.2/axios.min.js"></script>
+    
+    <script src="daily.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.6.2/axios.min.js"></script>
 </body>
 </html>
+    

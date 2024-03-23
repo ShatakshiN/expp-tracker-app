@@ -1,3 +1,6 @@
+body{
+    background: rgb(0, 0,0,0.3)
+}
 .bg-img{
     height:100vh;
     width: 100vw;
@@ -5,11 +8,18 @@
     top: 0;
     left: 0;
     z-index: -1;
+    /* filter: brightness(60%); */
 }
-h1{
+h5{
     font-family:Arial, Helvetica, sans-serif;
-    
+    color: rgb(6, 6, 6);
 }
+form{
+    label{
+        font-weight: bold;
+    }
+}
+
 .hr-text {
     line-height: 1em;
     position: relative;
@@ -47,6 +57,10 @@ h1{
     font-size: medium;
 }
 #loginButton:hover {
-    background-color: blue;
+    background-color: rgb(12, 12, 12);
     color: white; /* Optionally, you can change the text color when hovered */
+}
+#login{
+    color: black;
+    font-weight: bold;
 }

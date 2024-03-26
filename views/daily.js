@@ -5,23 +5,20 @@ async function sendData(event){
     const amount = event.target.amount.value;
     const category = event.target.categories.value;
 
-    // Extract user ID from URL and parse it as integer
-    const urlParams = new URLSearchParams(window.location.search);
-    console.log(urlParams)
-    const userId = parseInt(urlParams.get('id')); // Parse userId as integer
-    console.log(userId)
 
     obj = {
         date,
         description,
         amount,
         category,
-        userId
+       
     }
 
     try{
-        const response = axios.post('http://localhost:4000/daily-expense',obj);
-        showExpenseOnScreen(response.data.expenseData)
+        const response = await axios.post('http://localhost:4000/daily-expense',obj);
+        console.log(response.data.expense)
+        showExpenseOnScreen(response.data.expense);
+
 
     }catch(error){
         console.log(error);
@@ -29,7 +26,43 @@ async function sendData(event){
 
 };
 
+
+
 function showExpenseOnScreen(obj){
+    const parentElem = document.getElementById('expenseList');
+    const childElem = document.createElement('li');
+    childElem.textContent = `${obj.description} - ${obj.amount}`;
+    const delButton  = document.createElement('button');
+    childElem.className = "list-group-item";
+    delButton.textContent = 'DELETE';
+    childElem.appendChild(delButton);
 
-
+    delButton.onclick =async(event)=>{
+        try{
+            await axios.delete(`http://localhost:4000/delete-expense/${obj.id}`);
+            event.target.parentNode.remove();
+            //parentElem.remove(childElem)
+        }catch(err){
+            console.log(err)
+        }     
+       
+    }
+    parentElem.appendChild(childElem)
 }
+
+window.addEventListener("DOMContentLoaded", async () =>{
+    try{
+        const response = await axios.get("http://localhost:4000/daily-expense");
+
+        for (let i = 0; i < response.data.allUserOnScreen.length; i++) {
+            showExpenseOnScreen(response.data.allUserOnScreen[i]);
+        }
+
+
+    }catch(error){
+        console.log(error);
+
+    } 
+
+    
+});

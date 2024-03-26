@@ -108,26 +108,56 @@ app.post('/daily-expense', async(req,res,next)=>{
         const category = req.body.category;
         const id = req.body.userId;
 
-        const data = await Expense.create({
+        const expenseData = await Expense.create({
             date : date,
             description: description,
             amount : amount,
-            category : category,
-            SignUpId : id
+            category : category  
                      
         })
         //await Expense.setUsers(userData)
 
-        res.status(201).json({expense:data})       
+        res.status(201).json({expense:expenseData})       
 
     }
     catch(error){
         res.status(500),json({message : error})
     }
 })
+app.get('/daily-expense',async(req,res,next) =>{
 
+    try{
+        const users = await Expense.findAll();
+        res.status(200).json({allUserOnScreen : users})
+    }catch(error){
+        res.status(500).json({error : error.message})
+    };
+
+});
+
+app.delete('/delete-expense/:userId', async(req,res,next)=>{
+
+    const userId = req.params.userId
+
+    try{
+        const user = await Expense.findByPk(userId);
+        if (!user){
+            throw new Error('userId not found');
+        }
+
+        await user.destroy();
+        res.status(200).json({error : 'user deleted successfully'})
+
+    }catch(error){
+
+        res.status(500).json({error  : error.message})
+       
+    }
+
+});
+/* 
 Expense.belongsTo(Users,{constraints: true, onDelete: 'CASCADE'});
-Users.hasMany(Expense);
+Users.hasMany(Expense); */
 
 sequelize.sync()
     .then(()=>{

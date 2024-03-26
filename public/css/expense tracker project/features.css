@@ -33,4 +33,20 @@ body{
 }
 .list-group{
   margin-top: 5rem;
+  margin-left: 22rem;
+  gap: 1rem;
+  
+  
 }
+.list-group-item{
+ 
+  background-color: rgba(125, 125, 125, 0.286);
+  backdrop-filter: blur(20px);
+  opacity: 0.5;
+  color: azure;
+  border: none;
+  height: 60px; /* Adjust height as needed */ 
+  padding-top: 1rem;
+  font-size: larger;
+}
+

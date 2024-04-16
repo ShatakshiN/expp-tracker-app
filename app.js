@@ -5,6 +5,7 @@ const cors = require('cors');
 const sequelize = require('./util/database');
 const bodyParser = require('body-parser');
 const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 
 
 //models
@@ -65,6 +66,10 @@ app.post('/signUp', async(req,res,next)=>{
 
 });
 
+function generateAccessToken(id){
+    return jwt.sign({userId: id }, 'secret key')
+}
+
 app.post('/login', async (req, res, next) => {
     try {
         
@@ -86,7 +91,7 @@ app.post('/login', async (req, res, next) => {
                     res.status(500).json({msg : "something went wrong"})
                 }
                 if(result === true){
-                    res.status(200).json({msg: "user logged in successfully",id: loginCredentials[0].id })
+                    res.status(200).json({msg: "user logged in successfully", token: generateAccessToken(loginCredentials[0].id) })
                 }else {
                     return res.status(400).json({ msg: 'password incorrect' });
                 }
@@ -155,9 +160,10 @@ app.delete('/delete-expense/:userId', async(req,res,next)=>{
     }
 
 });
-/* 
+
+
 Expense.belongsTo(Users,{constraints: true, onDelete: 'CASCADE'});
-Users.hasMany(Expense); */
+Users.hasMany(Expense);
 
 sequelize.sync()
     .then(()=>{

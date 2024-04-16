@@ -12,9 +12,10 @@ async function sendData(event){
         const response  = await axios.post('http://localhost:4000/login',obj);  
         if (response.status ===200){
             //const userId = response.data.id; // Extracting the user id
-            console.log(userId)
+            //console.log(userId)
             //window.location.href = `daily.html?id=${userId}`;
-            window.location.href = 'daily.html';
+            localStorage.setItem('token', response.data.token)
+            //window.location.href = 'daily.html';
         }    
     }
     catch(error){

@@ -12,6 +12,7 @@ const jwt = require('jsonwebtoken');
 const Users = require('./models/users');
 const Expense = require('./models/expense');
 const { error } = require('console');
+const { where } = require('sequelize');
 
 
 app.use(bodyParser.json());
@@ -104,7 +105,25 @@ app.post('/login', async (req, res, next) => {
     }
 });
 
-app.post('/daily-expense', async(req,res,next)=>{
+function authenticate(req,res,next) {
+    try{
+        const token = req.header('Authorization');
+        console.log(token);
+        const user = jwt.verify(token, 'secret key');
+        console.log(user.userId)
+        Users.findByPk(user.userId).then(user =>{
+            console.log(JSON.stringify(user));
+            req.user = user;
+            next();
+        }).catch(err =>{throw new Error(err)})
+    }catch(err){
+        console.log(err);
+        return res.status(401).json({sucess : false})
+    }
+
+}
+
+app.post('/daily-expense', authenticate, async(req,res,next)=>{
 
     try{
         const description = req.body.description;
@@ -117,7 +136,9 @@ app.post('/daily-expense', async(req,res,next)=>{
             date : date,
             description: description,
             amount : amount,
-            category : category  
+            category : category,
+            SignUpId : req.user.id
+
                      
         })
         //await Expense.setUsers(userData)
@@ -129,10 +150,13 @@ app.post('/daily-expense', async(req,res,next)=>{
         res.status(500),json({message : error})
     }
 })
-app.get('/daily-expense',async(req,res,next) =>{
 
+
+
+app.get('/daily-expense',authenticate,async(req,res,next) =>{
+    const userId = req.user.id;
     try{
-        const users = await Expense.findAll();
+        const users = await Expense.findAll({where : {SignUpId : userId}});
         res.status(200).json({allUserOnScreen : users})
     }catch(error){
         res.status(500).json({error : error.message})

@@ -15,7 +15,8 @@ async function sendData(event){
     }
 
     try{
-        const response = await axios.post('http://localhost:4000/daily-expense',obj);
+        const token = localStorage.getItem('token')
+        const response = await axios.post('http://localhost:4000/daily-expense',obj, {headers : {'Authorization': token}});
         console.log(response.data.expense)
         showExpenseOnScreen(response.data.expense);
 
@@ -51,8 +52,9 @@ function showExpenseOnScreen(obj){
 }
 
 window.addEventListener("DOMContentLoaded", async () =>{
+    const token = localStorage.getItem('token')
     try{
-        const response = await axios.get("http://localhost:4000/daily-expense");
+        const response = await axios.get("http://localhost:4000/daily-expense" , {headers : {'Authorization': token}});
 
         for (let i = 0; i < response.data.allUserOnScreen.length; i++) {
             showExpenseOnScreen(response.data.allUserOnScreen[i]);

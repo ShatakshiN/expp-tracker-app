@@ -15,7 +15,7 @@ async function sendData(event){
             //console.log(userId)
             //window.location.href = `daily.html?id=${userId}`;
             localStorage.setItem('token', response.data.token)
-            //window.location.href = 'daily.html';
+            window.location.href = 'daily.html';
         }    
     }
     catch(error){

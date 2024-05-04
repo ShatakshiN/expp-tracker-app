@@ -24,6 +24,10 @@ const Users  = sequelize.define('SignUp',{
         type : Sequelize.STRING,
         allowNull :false
         
+    },
+    
+    isPremiumUser : {
+        type : Sequelize.BOOLEAN
     }
 });
 

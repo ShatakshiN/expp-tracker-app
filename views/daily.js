@@ -1,3 +1,5 @@
+
+
 async function sendData(event){
     event.preventDefault();
     const date  = event.target.date.value;
@@ -49,6 +51,44 @@ function showExpenseOnScreen(obj){
        
     }
     parentElem.appendChild(childElem)
+}
+
+document.getElementById("rzp-button1").onclick = async function (e){
+    const token = localStorage.getItem('token');
+    console.log(token);
+    const response = await axios.get('http://localhost:4000/buy-premium',   {headers : {'Authorization': token}});
+    console.log(response);
+    var options = {
+        'key' : response.data.key_id,
+        'order_id' : response.data.order.id,
+        //this handler function will handle the success payment
+        'handler' : async function (response){
+            await axios.post('http://localhost:4000/updatetransectionstatus', {
+                order_id : options.order_id,
+                payment_id : response.razorpay_payment_id,
+
+            }, {headers : {'Authorization' : token}})
+
+            alert('You are now a Premium user')
+        },
+
+    };
+    const rzpl  = new Razorpay(options);
+    rzpl.open();
+    e.preventDefault();
+
+    //if Payment fails
+    rzpl.on('payment.failed', function (response){
+        console.log(response)
+        alert('OOPS! Something went wrong')
+    });
+
+    //if Payment is Successful
+    rzpl.on('payment.successful', function(response) {
+        console.log(response); 
+        alert('Payment successful!'); 
+    });
+    
 }
 
 window.addEventListener("DOMContentLoaded", async () =>{

@@ -6,11 +6,17 @@ const sequelize = require('./util/database');
 const bodyParser = require('body-parser');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const Razorpay = require('razorpay');
+// Import dotenv and configure to load environment variables
+require('dotenv').config();
+
+
 
 
 //models
 const Users = require('./models/users');
 const Expense = require('./models/expense');
+const Order = require('./models/order');
 const { error } = require('console');
 const { where } = require('sequelize');
 
@@ -45,7 +51,7 @@ app.post('/signUp', async(req,res,next)=>{
         });
 
         if (existingUser) {
-            return res.status(400).json({message : "Email already exists"})
+            return res.status(400).json({message : "user already exists"})
         } 
 
         bcrypt.hash(password, 10, async(error, hash)=>{
@@ -105,23 +111,51 @@ app.post('/login', async (req, res, next) => {
     }
 });
 
-function authenticate(req,res,next) {
-    try{
+async function authenticate(req,res,next) {
+    /* try{
         const token = req.header('Authorization');
         console.log(token);
+        if (!token) {
+            throw new Error('Authorization token missing');
+        }
         const user = jwt.verify(token, 'secret key');
         console.log(user.userId)
         Users.findByPk(user.userId).then(user =>{
             console.log(JSON.stringify(user));
-            req.user = user;
+            req.user = user; // for global use
             next();
         }).catch(err =>{throw new Error(err)})
     }catch(err){
         console.log(err);
         return res.status(401).json({sucess : false})
+    } */
+    try {
+        const token = req.header('Authorization');
+        console.log(token);
+        
+        if (!token) {
+            throw new Error('Authorization token missing');
+        }
+        
+        const user = jwt.verify(token, 'secret key');
+        console.log(user.userId);
+
+        const foundUser = await Users.findByPk(user.userId); // Wait for the user lookup
+        if (!foundUser) {
+            throw new Error('User not found'); // Handle if user is not found
+        }
+
+        console.log(JSON.stringify(foundUser));
+        req.user = foundUser; // Assign the user to the request for global use
+        next();
+    } catch (err) {
+        console.log(err);
+        return res.status(401).json({ success: false });
     }
 
-}
+} 
+
+
 
 app.post('/daily-expense', authenticate, async(req,res,next)=>{
 
@@ -185,9 +219,74 @@ app.delete('/delete-expense/:userId', async(req,res,next)=>{
 
 });
 
+//purchase premium 
+app.get('/buy-premium', authenticate,async(req,res,next)=>{
+    try {
+        const rzp = new Razorpay({
+            key_id: 'rzp_test_Q2HptqFSrHvQyN',
+            key_secret:'3QSDfkuXQm9lCkhK6mGcgmf8'
+        });
+
+        const amount = 149;
+
+        // Create order asynchronously using await
+        const order = await new Promise((resolve, reject) => {
+            rzp.orders.create({ amount, currency: 'INR' }, (err, order) => {
+                if (err) {
+                    reject(err);
+                } else {
+                    resolve(order);
+                }
+            });
+        });
+
+        // Associate the order with the user
+        await req.user.createOrder({ orderid: order.id, status: "PENDING" });
+
+        // Send success response
+        res.status(201).json({ order, key_id: rzp.key_id });
+    } catch (err) {
+        console.log(err);
+        res.status(403).json({ message: 'Something went wrong', error: err.message });
+    }
+    
+})
+
+
+
+app.post('/updatetransectionstatus', authenticate, async (req, res, next) => {
+    try {
+        const { payment_id, order_id } = req.body;
+
+        // Find the order
+        const orderPromise = Order.findOne({ where: { orderid: order_id } });
+
+        // Update the user to premium
+        const userUpdatePromise = req.user.update({ isPremiumUser: true });
+
+        // Wait for both promises to resolve using Promise.all
+        const [order, user] = await Promise.all([orderPromise, userUpdatePromise]);
+
+        if (!order) {
+            return res.status(404).json({ success: false, message: 'Order not found' });
+        }
+
+        // Update the order status
+        await order.update({ paymentid: payment_id, status: 'successful' });
+
+        // Respond with success message
+        res.status(202).json({ success: true, message: 'Transaction successful' });
+    } catch (err) {
+        next(err); // Forward error to the error handling middleware
+    }
+});
+
 
 Expense.belongsTo(Users,{constraints: true, onDelete: 'CASCADE'});
 Users.hasMany(Expense);
+
+Order.belongsTo(Users, {constraints: true, onDelete: 'CASCADE'});
+Users.hasMany(Order); 
 
 sequelize.sync()
     .then(()=>{

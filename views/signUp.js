@@ -12,9 +12,12 @@ async function sendUserData(event){
 
     try{
         const response = await axios.post('http://localhost:4000/signUp',obj)
-        if(response.data.includes('user already exists !')){
+        if(response.data.message === 'user already exists'){
             alert("user already exists !")
-        } 
+        }
+        else{
+            alert('successfully signed in!')
+        }
 
     }catch(error){
         console.log(error)

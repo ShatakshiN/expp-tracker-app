@@ -46,7 +46,7 @@ app.post('/signUp', async(req,res,next)=>{
          // Check if the email already exists
         const existingUser = await Users.findOne({
             where: {
-                email: email
+                email: email,
             }
         });
 
@@ -58,7 +58,8 @@ app.post('/signUp', async(req,res,next)=>{
             const userData = await Users.create({
                 name : name,
                 email : email,
-                passWord : hash
+                passWord : hash,
+             
 
             })
 
@@ -227,7 +228,7 @@ app.get('/buy-premium', authenticate,async(req,res,next)=>{
             key_secret:'3QSDfkuXQm9lCkhK6mGcgmf8'
         });
 
-        const amount = 149;
+        const amount = 149.00;
 
         // Create order asynchronously using await
         const order = await new Promise((resolve, reject) => {
@@ -239,18 +240,18 @@ app.get('/buy-premium', authenticate,async(req,res,next)=>{
                 }
             });
         });
-
+        
         // Associate the order with the user
         await req.user.createOrder({ orderid: order.id, status: "PENDING" });
 
         // Send success response
-        res.status(201).json({ order, key_id: rzp.key_id });
+        return res.status(201).json({ order, key_id: rzp.key_id });
     } catch (err) {
         console.log(err);
         res.status(403).json({ message: 'Something went wrong', error: err.message });
     }
     
-})
+});
 
 
 
@@ -272,7 +273,7 @@ app.post('/updatetransectionstatus', authenticate, async (req, res, next) => {
         }
 
         // Update the order status
-        await order.update({ paymentid: payment_id, status: 'successful' });
+        await order.update({ paymentId: payment_id, status: 'successful' });
 
         // Respond with success message
         res.status(202).json({ success: true, message: 'Transaction successful' });
@@ -280,6 +281,11 @@ app.post('/updatetransectionstatus', authenticate, async (req, res, next) => {
         next(err); // Forward error to the error handling middleware
     }
 });
+
+/* app.get('/check-premium-status', authenticate, async (req, res, next) => {
+    
+}); */
+
 
 
 Expense.belongsTo(Users,{constraints: true, onDelete: 'CASCADE'});

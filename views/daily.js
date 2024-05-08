@@ -55,14 +55,16 @@ function showExpenseOnScreen(obj){
 
 document.getElementById("rzp-button1").onclick = async function (e){
     const token = localStorage.getItem('token');
-    console.log(token);
+    //console.log(token);
     const response = await axios.get('http://localhost:4000/buy-premium',   {headers : {'Authorization': token}});
-    console.log(response);
+    //console.log(response);
+    console.log('payment id' +  response.razorpay_payment_id)
     var options = {
         'key' : response.data.key_id,
         'order_id' : response.data.order.id,
         //this handler function will handle the success payment
         'handler' : async function (response){
+            console.log('payment id' + response.razorpay_payment_id)
             await axios.post('http://localhost:4000/updatetransectionstatus', {
                 order_id : options.order_id,
                 payment_id : response.razorpay_payment_id,
@@ -87,8 +89,10 @@ document.getElementById("rzp-button1").onclick = async function (e){
     rzpl.on('payment.successful', function(response) {
         console.log(response); 
         alert('Payment successful!'); 
+
     });
     
+        
 }
 
 window.addEventListener("DOMContentLoaded", async () =>{

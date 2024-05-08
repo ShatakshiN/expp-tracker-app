@@ -27,7 +27,8 @@ const Users  = sequelize.define('SignUp',{
     },
     
     isPremiumUser : {
-        type : Sequelize.BOOLEAN
+        type : Sequelize.BOOLEAN,
+        defaultValue: false
     }
 });
 

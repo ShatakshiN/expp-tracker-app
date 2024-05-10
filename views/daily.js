@@ -1,5 +1,3 @@
-
-
 async function sendData(event){
     event.preventDefault();
     const date  = event.target.date.value;
@@ -53,10 +51,39 @@ function showExpenseOnScreen(obj){
     parentElem.appendChild(childElem)
 }
 
+
+window.addEventListener("DOMContentLoaded", async () => {
+    const token = localStorage.getItem('token');
+    try {
+        const response = await axios.get("http://localhost:4000/check-premium-status", { headers: { 'Authorization': token } });
+        
+        const isPremium = response.data.isPremiumUser; // Assuming the server sends back the premium status
+        
+        if (isPremium) {
+            // User is premium, hide the Go Premium button
+            document.getElementById('rzp-button1').style.display = 'none';
+            document.getElementById('PremiumTag').classList.remove('visually-hidden ');
+        } else {
+            // User is not premium, show the Go Premium button
+            document.getElementById('rzp-button1').style.display = 'block';
+        }
+
+        // Fetch and display user expenses
+        const expenseResponse = await axios.get("http://localhost:4000/daily-expense", { headers: { 'Authorization': token } });
+
+        for (let i = 0; i < expenseResponse.data.allUserOnScreen.length; i++) {
+            showExpenseOnScreen(expenseResponse.data.allUserOnScreen[i]);
+        }
+    } catch (error) {
+        console.log(error);
+    }
+});
+
+
 document.getElementById("rzp-button1").onclick = async function (e){
     const token = localStorage.getItem('token');
     //console.log(token);
-    const response = await axios.get('http://localhost:4000/buy-premium',   {headers : {'Authorization': token}});
+    const response = await axios.get('http://localhost:4000/buy-premium', {headers : {'Authorization': token}});
     //console.log(response);
     console.log('payment id' +  response.razorpay_payment_id)
     var options = {
@@ -83,6 +110,7 @@ document.getElementById("rzp-button1").onclick = async function (e){
     rzpl.on('payment.failed', function (response){
         console.log(response)
         alert('OOPS! Something went wrong')
+        
     });
 
     //if Payment is Successful
@@ -90,12 +118,23 @@ document.getElementById("rzp-button1").onclick = async function (e){
         console.log(response); 
         alert('Payment successful!'); 
 
+       // Update local storage to mark user as premium
+       localStorage.setItem('isPremium', 'true'); 
+
+       // Hide the Go Premium button after successful payment
+       document.getElementById('rzp-button1').style.display = 'none';
+
+       document.getElementById('PremiumTag').style.display  = 'block';
+    
+
     });
     
         
 }
 
-window.addEventListener("DOMContentLoaded", async () =>{
+
+
+/* window.addEventListener("DOMContentLoaded", async () =>{
     const token = localStorage.getItem('token')
     try{
         const response = await axios.get("http://localhost:4000/daily-expense" , {headers : {'Authorization': token}});
@@ -104,11 +143,12 @@ window.addEventListener("DOMContentLoaded", async () =>{
             showExpenseOnScreen(response.data.allUserOnScreen[i]);
         }
 
-
     }catch(error){
         console.log(error);
 
     } 
 
     
-});
+}); */
+
+

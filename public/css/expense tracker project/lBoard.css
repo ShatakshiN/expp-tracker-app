@@ -8,12 +8,6 @@ svg.bi {
     background-size: cover;
     background-repeat: no-repeat;
   }
-  @media (max-width:991px){
-    .sidebar{
-      background-color: rgb(225, 225,225,0.15);
-      backdrop-filter: blur(10px);
-    }
-  }
 #leaderBoardTable{
     padding-top: 4rem;
     background-color: rgba(11, 11, 11, 0.286);

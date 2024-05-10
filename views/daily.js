@@ -57,15 +57,19 @@ window.addEventListener("DOMContentLoaded", async () => {
     try {
         const response = await axios.get("http://localhost:4000/check-premium-status", { headers: { 'Authorization': token } });
         
-        const isPremium = response.data.isPremiumUser; // Assuming the server sends back the premium status
+        const isPremium = response.data.isPremium
+       
         
         if (isPremium) {
+            console.log('hi im premium')
             // User is premium, hide the Go Premium button
             document.getElementById('rzp-button1').style.display = 'none';
-            document.getElementById('PremiumTag').classList.remove('visually-hidden ');
+          
         } else {
             // User is not premium, show the Go Premium button
             document.getElementById('rzp-button1').style.display = 'block';
+        
+
         }
 
         // Fetch and display user expenses
@@ -123,8 +127,7 @@ document.getElementById("rzp-button1").onclick = async function (e){
 
        // Hide the Go Premium button after successful payment
        document.getElementById('rzp-button1').style.display = 'none';
-
-       document.getElementById('PremiumTag').style.display  = 'block';
+      
     
 
     });
@@ -134,21 +137,5 @@ document.getElementById("rzp-button1").onclick = async function (e){
 
 
 
-/* window.addEventListener("DOMContentLoaded", async () =>{
-    const token = localStorage.getItem('token')
-    try{
-        const response = await axios.get("http://localhost:4000/daily-expense" , {headers : {'Authorization': token}});
-
-        for (let i = 0; i < response.data.allUserOnScreen.length; i++) {
-            showExpenseOnScreen(response.data.allUserOnScreen[i]);
-        }
-
-    }catch(error){
-        console.log(error);
-
-    } 
-
-    
-}); */
 
 

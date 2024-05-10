@@ -17,7 +17,7 @@ async function sendUserData(event){
         }
         else{
             alert('successfully signed in!')
-            window.location.href = 'daily.html';
+            window.location.href = 'login.html';
 
         }
 

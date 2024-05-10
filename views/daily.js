@@ -111,6 +111,9 @@ document.getElementById("rzp-button1").onclick = async function (e){
             }, {headers : {'Authorization' : token}})
 
             alert('You are now a Premium user');
+            document.getElementById('rzp-button1').style.display = 'none';
+            document.getElementById('PremiumTag').classList.remove('visually-hidden');
+            document.getElementById('leaderBoardTag').classList.remove('visually-hidden');
 
         },
 
@@ -135,9 +138,9 @@ document.getElementById("rzp-button1").onclick = async function (e){
        localStorage.setItem('isPremium', 'true'); 
 
        // Hide the Go Premium button after successful payment
-       document.getElementById('rzp-button1').style.display = 'none';
-       document.getElementById('PremiumTag').classList.remove('visually-hidden');
-       document.getElementById('leaderBoardTag').classList.remove('visually-hidden');
+       //document.getElementById('rzp-button1').style.display = 'none';
+       //document.getElementById('PremiumTag').classList.remove('visually-hidden');
+       //document.getElementById('leaderBoardTag').classList.remove('visually-hidden');
       
     
 

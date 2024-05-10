@@ -64,6 +64,14 @@ window.addEventListener("DOMContentLoaded", async () => {
             console.log('hi im premium')
             // User is premium, hide the Go Premium button
             document.getElementById('rzp-button1').style.display = 'none';
+
+            //show you are now a premium user message
+            document.getElementById('PremiumTag').classList.remove('visually-hidden');
+
+            //show leaderboard
+            document.getElementById('leaderBoardTag').classList.remove('visually-hidden');
+
+            
           
         } else {
             // User is not premium, show the Go Premium button
@@ -102,7 +110,8 @@ document.getElementById("rzp-button1").onclick = async function (e){
 
             }, {headers : {'Authorization' : token}})
 
-            alert('You are now a Premium user')
+            alert('You are now a Premium user');
+
         },
 
     };
@@ -127,6 +136,8 @@ document.getElementById("rzp-button1").onclick = async function (e){
 
        // Hide the Go Premium button after successful payment
        document.getElementById('rzp-button1').style.display = 'none';
+       document.getElementById('PremiumTag').classList.remove('visually-hidden');
+       document.getElementById('leaderBoardTag').classList.remove('visually-hidden');
       
     
 

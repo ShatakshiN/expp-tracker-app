@@ -113,23 +113,6 @@ app.post('/login', async (req, res, next) => {
 });
 
 async function authenticate(req,res,next) {
-    /* try{
-        const token = req.header('Authorization');
-        console.log(token);
-        if (!token) {
-            throw new Error('Authorization token missing');
-        }
-        const user = jwt.verify(token, 'secret key');
-        console.log(user.userId)
-        Users.findByPk(user.userId).then(user =>{
-            console.log(JSON.stringify(user));
-            req.user = user; // for global use
-            next();
-        }).catch(err =>{throw new Error(err)})
-    }catch(err){
-        console.log(err);
-        return res.status(401).json({sucess : false})
-    } */
     try {
         const token = req.header('Authorization');
         console.log(token);
@@ -254,7 +237,7 @@ app.get('/buy-premium', authenticate,async(req,res,next)=>{
 });
 
 
-
+//update transection.
 app.post('/updatetransectionstatus', authenticate, async (req, res, next) => {
     try {
         const { payment_id, order_id } = req.body;
@@ -282,9 +265,20 @@ app.post('/updatetransectionstatus', authenticate, async (req, res, next) => {
     }
 });
 
-/* app.get('/check-premium-status', authenticate, async (req, res, next) => {
-    
-}); */
+app.get('/check-premium-status', authenticate, async (req, res, next) => {
+    try {
+        const user = req.user;
+
+        // Check if the user is premium (you may have a field like isPremium in your Users model)
+        const isPremium = user.isPremiumUser;
+
+        res.status(200).json({ isPremium });
+    } catch (err) {
+        console.log(err);
+        res.status(500).json({ message: 'Error checking premium status', error: err.message });
+    }
+});
+
 
 
 

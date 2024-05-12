@@ -17,7 +17,7 @@ require('dotenv').config();
 const Users = require('./models/users');
 const Expense = require('./models/expense');
 const Order = require('./models/order');
-const { error } = require('console');
+const { error, group } = require('console');
 const { where } = require('sequelize');
 
 
@@ -182,38 +182,47 @@ app.get('/daily-expense',authenticate,async(req,res,next) =>{
 
 });
 
-app.delete('/delete-expense/:userId', async(req,res,next)=>{
+app.delete('/delete-expense/:expenseId', authenticate, async (req, res, next) => {
+    try {
+        const expenseId = req.params.expenseId;
+        const userId = req.user.id;
 
-    const userId = req.params.userId
+        // Find the expense to be deleted
+        const expenseToDelete = await Expense.findOne({
+            where: {
+                id: expenseId,
+                SignUpId: userId
+            }
+        });
 
-    try{
-        const user = await Expense.findByPk(userId);
-        if (!user){
-            throw new Error('userId not found');
+        if (!expenseToDelete) {
+            return res.status(404).json({ message: "Expense not found" });
         }
 
-        await user.destroy();
-        res.status(200).json({error : 'user deleted successfully'})
+        // Delete the expense
+        await expenseToDelete.destroy();
 
-    }catch(error){
-
-        res.status(500).json({error  : error.message})
-       
+        return res.status(200).json({ message: "Expense deleted successfully" });
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ message: "Failed to delete expense", error: error.message });
     }
-
 });
 
+
 //purchase premium 
-app.get('/buy-premium', authenticate,async(req,res,next)=>{
+
+app.get('/buy-premium', authenticate, async (req, res, next) => {
+    const t = await sequelize.transaction(); // Start a transaction
+
     try {
         const rzp = new Razorpay({
             key_id: 'rzp_test_Q2HptqFSrHvQyN',
-            key_secret:'3QSDfkuXQm9lCkhK6mGcgmf8'
+            key_secret: '3QSDfkuXQm9lCkhK6mGcgmf8'
         });
 
         const amount = 149.00;
 
-        // Create order asynchronously using await
         const order = await new Promise((resolve, reject) => {
             rzp.orders.create({ amount, currency: 'INR' }, (err, order) => {
                 if (err) {
@@ -223,47 +232,50 @@ app.get('/buy-premium', authenticate,async(req,res,next)=>{
                 }
             });
         });
-        
-        // Associate the order with the user
-        await req.user.createOrder({ orderid: order.id, status: "PENDING" });
 
-        // Send success response
+        await req.user.createOrder({ orderid: order.id, status: "PENDING" }, { transaction: t });
+
+        await t.commit(); // Commit the transaction
+
         return res.status(201).json({ order, key_id: rzp.key_id });
     } catch (err) {
+        await t.rollback(); // Rollback the transaction if an error occurs
         console.log(err);
         res.status(403).json({ message: 'Something went wrong', error: err.message });
     }
-    
 });
+
 
 
 //update transection.
 app.post('/updatetransectionstatus', authenticate, async (req, res, next) => {
+    const { order_id, payment_id } = req.body;
+
     try {
-        const { payment_id, order_id } = req.body;
+        await sequelize.transaction(async (t) => {
+            // Find the order within the transaction
+            const order = await Order.findOne({ where: { orderid: order_id }, transaction: t });
 
-        // Find the order
-        const orderPromise = Order.findOne({ where: { orderid: order_id } });
+            if (!order) {
+                return res.status(404).json({ success: false, message: 'Order not found' });
+            }
 
-        // Update the user to premium
-        const userUpdatePromise = req.user.update({ isPremiumUser: true });
+            // Update the order status and user's premium status within the transaction
+            await Promise.all([
+                order.update({ paymentId: payment_id, status: 'successful' }, { transaction: t }),
+                req.user.update({ isPremiumUser: true }, { transaction: t })
+            ]);
 
-        // Wait for both promises to resolve using Promise.all
-        const [order, user] = await Promise.all([orderPromise, userUpdatePromise]);
-
-        if (!order) {
-            return res.status(404).json({ success: false, message: 'Order not found' });
-        }
-
-        // Update the order status
-        await order.update({ paymentId: payment_id, status: 'successful' });
-
-        // Respond with success message
-        res.status(202).json({ success: true, message: 'Transaction successful' });
+            // Commit the transaction if all operations are successful
+            res.status(202).json({ success: true, message: 'Transaction successful' });
+        });
     } catch (err) {
-        next(err); // Forward error to the error handling middleware
+        // Log the error and handle it appropriately
+        console.log(err);
+        res.status(500).json({ success: false, message: 'Transaction failed' });
     }
 });
+
 
 app.get('/check-premium-status', authenticate, async (req, res, next) => {
     try {
@@ -272,15 +284,35 @@ app.get('/check-premium-status', authenticate, async (req, res, next) => {
         // Check if the user is premium (you may have a field like isPremium in your Users model)
         const isPremium = user.isPremiumUser;
 
-        res.status(200).json({ isPremium });
+        return res.status(200).json({ isPremium });
     } catch (err) {
         console.log(err);
         res.status(500).json({ message: 'Error checking premium status', error: err.message });
     }
 });
 
+app.get('/premium/LeaderBoard', authenticate ,async(req,res,next)=>{
+    try{
+        const LeaderBoardData = await Users.findAll({
+            attributes : ['id', 'name',[sequelize.fn('sum', sequelize.col('expenses.amount')), 'total_cost']],
+            include : [
+                {
+                    model : Expense,
+                    attributes : []
 
+                  }
+            ],
+            group : ['id'],
+            order : [['total_cost', 'DESC']]
+        })
+        res.status(200).json(LeaderBoardData);
 
+    }catch(err){
+        console.log(err)
+        res.status(500).json(err)
+    }
+
+});
 
 Expense.belongsTo(Users,{constraints: true, onDelete: 'CASCADE'});
 Users.hasMany(Expense);

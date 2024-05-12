@@ -52,4 +52,6 @@ body{
 #PremiumTag {
   color: aliceblue;
 }
-
+.offcanvas-body a {
+  margin-right: 10px; /* Adjust as needed */
+}

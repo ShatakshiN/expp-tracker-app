@@ -14,3 +14,6 @@ svg.bi {
     backdrop-filter: blur(20px);
     opacity: 0.5;
 }
+.offcanvas-body a {
+  margin-right: 10px; /* Adjust as needed */
+}

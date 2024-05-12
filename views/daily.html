@@ -37,15 +37,13 @@
                         <li class="nav-item mx-2">
                             <a class="nav-link" href="#">YEARLY</a>
                         </li>
-                        <li class="nav-item mx-2 visually-hidden" id ="leaderBoardTag">
-                          <a class="nav-link" href="#">LEADER BOARD</a>
-                      </li>
+                       
 
                     </ul>
                     <div class="d-flex flex-column justify-content-center align-item-center ">
                       <a href="#" class="text-white" id="rzp-button1">GO PREMIUM</a>
-                    
                       <a href="./login.html" class="text-white">LOGOUT</a>
+                      <!--a href="leaderboard.html" class=" visually-hidden text-white" id="leaderBoardTag">LEADERBOARD</a-->
                         
                     </div>
                 </div>
@@ -54,6 +52,7 @@
     </nav>
     <div class = 'visually-hidden justify-content-start'id="PremiumTag"> 
       <h5>you are now a premium user</h5>
+      <button class="btn btn-dark" id="leaderboardbtn">SEE LEADERBOARD</button>
     </div>
     <div class="container-fluid" id="form">
         <form action="post" class="col" onsubmit="sendData(event)">
@@ -90,7 +89,10 @@
           <!--li class="list-group-item">A second item - 400 - food</li>
           <li class="list-group-item">A third item</li-->
         </ul>
+       
     </div>
+    <ul id="leaderboardTable"> </ul>
+    
     
     <script src="daily.js"></script>
     <script src="https://checkout.razorpay.com/v1/checkout.js"></script>

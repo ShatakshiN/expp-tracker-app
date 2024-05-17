@@ -7,6 +7,8 @@ const bodyParser = require('body-parser');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const Razorpay = require('razorpay');
+//const Brevo = require('@getbrevo/brevo');
+var Brevo = require('@getbrevo/brevo');
 // Import dotenv and configure to load environment variables
 require('dotenv').config();
 
@@ -17,6 +19,7 @@ require('dotenv').config();
 const Users = require('./models/users');
 const Expense = require('./models/expense');
 const Order = require('./models/order');
+const resetPassword  = require('./models/forgot password');
 const { error, group } = require('console');
 const { where } = require('sequelize');
 
@@ -314,11 +317,53 @@ app.get('/premium/LeaderBoard', authenticate ,async(req,res,next)=>{
 
 });
 
+app.post('/forgotPassword' , async(req,res,next)=>{
+    try{
+        const email = req.body.email;
+        console.log(email);
+        const user = await Users.findOne({where : {email : email}},{
+            include : [
+                {model : resetPassword}
+            ]
+        })
+        console.log(user)
+        console.log(user== null)
+        if(user === null)
+             return res.status(404).json({success : false , msg :"Email not found"})
+
+       
+        var apiInstance = new Brevo.TransactionalEmailsApi();
+        apiInstance.setApiKey(Brevo.AccountApiApiKeys.apiKey, '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');
+        
+        const link = await user.createResetPassword();
+
+        let sendSmtpEmail = new Brevo.SendSmtpEmail(); 
+        sendSmtpEmail.subject = "reset password";
+        sendSmtpEmail.htmlContent = '<p>Click the link to reset your password</p>'+
+        `<a href="http://127.0.0.1:5500/Password/reset_password.html?reset=${link.id}">click here</a>`;
+        sendSmtpEmail.sender = {"name":"Shatakshi","email":"shatakshinimare27@gmail.com"};
+        sendSmtpEmail.to = [{"email": email }];
+
+        const data = await apiInstance.sendTransacEmail(sendSmtpEmail);
+        return res.status(200).json(JSON.stringify(data));
+
+    }catch(e){
+        console.log(e)
+        return res.status(500).json({success : false ,msg :"Internal server error"})
+    }
+        
+});
+
+
+
 Expense.belongsTo(Users,{constraints: true, onDelete: 'CASCADE'});
 Users.hasMany(Expense);
 
 Order.belongsTo(Users, {constraints: true, onDelete: 'CASCADE'});
 Users.hasMany(Order); 
+
+Users.hasMany(resetPassword)
+resetPassword.belongsTo(Users,{constraints: true, onDelete: 'CASCADE'})
 
 sequelize.sync()
     .then(()=>{

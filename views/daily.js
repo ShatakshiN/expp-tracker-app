@@ -1,4 +1,3 @@
-
 window.addEventListener("DOMContentLoaded", async () => {
     const token = localStorage.getItem('token');
     try {
@@ -17,8 +16,11 @@ window.addEventListener("DOMContentLoaded", async () => {
 
             document.getElementById('downloadBtn').classList.remove('visually-hidden');
 
+<<<<<<< HEAD
             //document.getElementById('showDownloadedLinksBtn').classList.remove('visually-hidden');
 
+=======
+>>>>>>> 07be2ecf3924c0a8acf4cf8f8a18d682e431ddb6
             //show leaderboard
             //document.getElementById('leaderBoardTag').classList.remove('visually-hidden');
 
@@ -175,9 +177,12 @@ document.getElementById("rzp-button1").onclick = async function (e){
             document.getElementById('rzp-button1').style.display = 'none';
             document.getElementById('PremiumTag').classList.remove('visually-hidden');
             document.getElementById('downloadBtn').classList.remove('visually-hidden');
+<<<<<<< HEAD
            
             
 
+=======
+>>>>>>> 07be2ecf3924c0a8acf4cf8f8a18d682e431ddb6
             //document.getElementById('leaderBoardTag').classList.remove('visually-hidden');
 
         },
@@ -213,6 +218,21 @@ document.getElementById("rzp-button1").onclick = async function (e){
         
 }
 
+//downloading expense of each user
+document.getElementById('downloadBtn1').addEventListener('click', async()=>{
+    const token = localStorage.getItem('token');
+    try{
+        const response  = await axios.get('http://localhost:4000/download-expense',{headers : {'Authorization': token}})
+        const a = document.createElement('a')
+        a.href = response.data.fileURL;
+        a.download = 'expense.csv';
+        
+        a.click()
+    }
+    catch(error){
+        console.log(error)
+    }
+})
 
 
 function displayDownloadedFiles(files) {

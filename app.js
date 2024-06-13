@@ -9,6 +9,7 @@ const jwt = require('jsonwebtoken');
 const Razorpay = require('razorpay');
 //const Brevo = require('@getbrevo/brevo');
 var Brevo = require('@getbrevo/brevo');
+const aws = require('aws-sdk');
 // Import dotenv and configure to load environment variables
 require('dotenv').config();
 
@@ -173,7 +174,6 @@ app.post('/daily-expense', authenticate, async(req,res,next)=>{
 })
 
 
-
 app.get('/daily-expense',authenticate,async(req,res,next) =>{
     const userId = req.user.id;
     try{
@@ -184,6 +184,8 @@ app.get('/daily-expense',authenticate,async(req,res,next) =>{
     };
 
 });
+
+
 
 app.delete('/delete-expense/:expenseId', authenticate, async (req, res, next) => {
     try {
@@ -220,8 +222,8 @@ app.get('/buy-premium', authenticate, async (req, res, next) => {
 
     try {
         const rzp = new Razorpay({
-            key_id: 'rzp_test_Q2HptqFSrHvQyN',
-            key_secret: '3QSDfkuXQm9lCkhK6mGcgmf8'
+            key_id: process.env.RAZORPAY_KEY_ID,
+            key_secret: process.env.RAZORPAY_KEY_SECRET,
         });
 
         const amount = 149.00;
@@ -331,16 +333,16 @@ app.post('/forgotPassword' , async(req,res,next)=>{
         if(user === null)
              return res.status(404).json({success : false , msg :"Email not found"})
 
-       
+        
         var apiInstance = new Brevo.TransactionalEmailsApi();
-        apiInstance.setApiKey(Brevo.AccountApiApiKeys.apiKey, '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');
+        apiInstance.setApiKey(Brevo.AccountApiApiKeys.apiKey,process.env.BREVO_API_KEY);
         
         const link = await user.createResetPassword();
 
         let sendSmtpEmail = new Brevo.SendSmtpEmail(); 
         sendSmtpEmail.subject = "reset password";
         sendSmtpEmail.htmlContent = '<p>Click the link to reset your password</p>'+
-        `<a href="http://127.0.0.1:5500/Password/reset_password.html?reset=${link.id}">click here</a>`;
+        `<a href="http://127.0.0.1:5500/views/reset password.html?reset=${link.id}">click here</a>`;
         sendSmtpEmail.sender = {"name":"Shatakshi","email":"shatakshinimare27@gmail.com"};
         sendSmtpEmail.to = [{"email": email }];
 
@@ -354,6 +356,112 @@ app.post('/forgotPassword' , async(req,res,next)=>{
         
 });
 
+app.post('/reset-password/:resetId' , async(req,res)=>{
+    const t = await sequelize.transaction()
+    try{
+        const resetId = req.params.resetId;
+        const newPassword = req.body.newPassword
+        const confirmPassword = req.body.confirmPassword
+
+        const resetUser = await resetPassword.findByPk(resetId)
+        if (!resetUser) {
+            return res.status(404).json({ success: false, msg: "User not found" });
+    }
+        if(!resetUser.isActive){
+            return res.status(401).json({success : false , msg:"link expired create a new one"})
+        }
+        if(newPassword !== confirmPassword)
+        return res.status(403).json({success : false , msg:"new and confirm password are different"})
+    
+    //const user = await resetUser.getUser() //error here 
+    const userId = resetUser.SignUpId; // Assuming the foreign key is stored as SignUpId
+    const user = await Users.findByPk(userId);
+    if (!user) {
+            return res.status(404).json({ success: false, msg: "User not found" });
+    }
+    const hash = await bcrypt.hash(newPassword,10)
+
+    await Users.update({password : hash},{ where: { id: user.id }},{transaction :t})
+    await resetUser.update({isActive : false},{transaction : t})
+
+    await t.commit()
+
+    return res.json({success : true , msg:"Password changed successfully"})
+    }catch(e){
+        console.log(e)
+        await t.rollback()
+        return res.status(500).json({success : false , msg : "Internal server error"})
+    }
+})
+
+app.get('/check-password-link/:resetId', async(req,res)=>{
+    try{
+        const resetUser = await resetPassword.findByPk(req.params.resetId)
+        return res.json({isActive : resetUser.isActive})
+    }catch(e){
+        console.log(e)
+        return res.status(500).json({success : false , msg : "Internal server error"})
+    }
+})
+
+function uploadToS3(data, fileName){
+    const BUCKET_NAME = "expensetrackershatakshi";
+    const IAM_USER_KEY = process.env.AWS_ACCESS_KEY;
+    const IAM_USER_SECRET = process.env.AWS_SECRET_ACCESS_KEY;
+
+    let s3bucket = new aws.S3({
+        accessKeyId: IAM_USER_KEY,
+        secretAccessKey: IAM_USER_SECRET,
+    })
+
+    var params={
+        Bucket: BUCKET_NAME,
+        Key: fileName,
+        Body: data,
+        ACL: 'public-read'
+    }
+    return new Promise((resolve, reject)=>{
+        s3bucket.upload(params,(err,s3Response)=>{
+            if(err){
+                console.log("Something is Wrong",err);
+                reject(err);
+            }
+            else{
+                console.log("Success",s3Response);
+                resolve(s3Response.Location);
+            }
+        })
+
+    })
+
+
+}
+
+//downloading expense for each user
+app.get('/download-expense',authenticate, async(req,res,next)=>{
+    const userId = req.user.id;
+    try{
+        const name= await req.user.name;
+        const random= Math.random();
+        const users = await Expense.findAll({where : {SignUpId : userId}});
+        console.log(users)
+        const stringifiedExpenses = JSON.stringify(users);
+        const fileName = `${name}_${random}.txt`;
+        const fileURL = await uploadToS3(stringifiedExpenses, fileName);
+        console.log(fileURL)
+        res.status(200).json({fileURL, success:true})
+
+
+    }catch(error){
+        res.status(500).json({error : error.message})
+    };
+
+
+   
+
+})
+
+
 
 
 Expense.belongsTo(Users,{constraints: true, onDelete: 'CASCADE'});
@@ -363,7 +471,7 @@ Order.belongsTo(Users, {constraints: true, onDelete: 'CASCADE'});
 Users.hasMany(Order); 
 
 Users.hasMany(resetPassword)
-resetPassword.belongsTo(Users,{constraints: true, onDelete: 'CASCADE'})
+resetPassword.belongsTo(Users,{constraints: true, onDelete: 'CASCADE'});
 
 sequelize.sync()
     .then(()=>{

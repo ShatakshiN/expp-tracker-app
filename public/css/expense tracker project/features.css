@@ -55,3 +55,7 @@ body{
 .offcanvas-body a {
   margin-right: 10px; /* Adjust as needed */
 }
+#downloadBtn{
+  margin-top: 10rem;
+  margin-left: 25rem;
+}

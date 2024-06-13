@@ -451,10 +451,13 @@ app.get('/download-expense',authenticate, async(req,res,next)=>{
         const fileName = `${name}_${random}.txt`;
         const fileURL = await uploadToS3(stringifiedExpenses, fileName);
         console.log(fileURL)
+<<<<<<< HEAD
         const data = await FileURL.create({
             url : fileURL,
             SignUpId : userId
         })
+=======
+>>>>>>> 07be2ecf3924c0a8acf4cf8f8a18d682e431ddb6
         res.status(200).json({fileURL, success:true})
 
 

@@ -21,8 +21,10 @@ const Users = require('./models/users');
 const Expense = require('./models/expense');
 const Order = require('./models/order');
 const resetPassword  = require('./models/forgot password');
+const FileURL = require('./models/fileURL');
 const { error, group } = require('console');
 const { where } = require('sequelize');
+
 
 
 app.use(bodyParser.json());
@@ -449,6 +451,10 @@ app.get('/download-expense',authenticate, async(req,res,next)=>{
         const fileName = `${name}_${random}.txt`;
         const fileURL = await uploadToS3(stringifiedExpenses, fileName);
         console.log(fileURL)
+        const data = await FileURL.create({
+            url : fileURL,
+            SignUpId : userId
+        })
         res.status(200).json({fileURL, success:true})
 
 
@@ -461,6 +467,17 @@ app.get('/download-expense',authenticate, async(req,res,next)=>{
 
 })
 
+app.get('/downloaded-files', authenticate, async (req, res) => {
+    try {
+        const userId = req.user.id;
+        const files = await FileURL.findAll({ where: { SignUpId: userId } });
+        res.status(200).json(files);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+
 
 
 
@@ -472,6 +489,9 @@ Users.hasMany(Order);
 
 Users.hasMany(resetPassword)
 resetPassword.belongsTo(Users,{constraints: true, onDelete: 'CASCADE'});
+
+FileURL.belongsTo(Users, {constraints: true, onDelete: 'CASCADE'});
+Users.hasMany(FileURL);
 
 sequelize.sync()
     .then(()=>{

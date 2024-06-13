@@ -17,10 +17,14 @@ window.addEventListener("DOMContentLoaded", async () => {
 
             document.getElementById('downloadBtn').classList.remove('visually-hidden');
 
+            //document.getElementById('showDownloadedLinksBtn').classList.remove('visually-hidden');
+
             //show leaderboard
             //document.getElementById('leaderBoardTag').classList.remove('visually-hidden');
 
-            
+            // Fetch and display the list of downloaded files
+            const filesResponse = await axios.get("http://localhost:4000/downloaded-files", { headers: { 'Authorization': token } });
+            displayDownloadedFiles(filesResponse.data); 
           
         } else {
             // User is not premium, show the Go Premium button
@@ -35,6 +39,7 @@ window.addEventListener("DOMContentLoaded", async () => {
         for (let i = 0; i < expenseResponse.data.allUserOnScreen.length; i++) {
             showExpenseOnScreen(expenseResponse.data.allUserOnScreen[i]);
         }
+
     } catch (error) {
         console.log(error);
     }
@@ -170,6 +175,9 @@ document.getElementById("rzp-button1").onclick = async function (e){
             document.getElementById('rzp-button1').style.display = 'none';
             document.getElementById('PremiumTag').classList.remove('visually-hidden');
             document.getElementById('downloadBtn').classList.remove('visually-hidden');
+           
+            
+
             //document.getElementById('leaderBoardTag').classList.remove('visually-hidden');
 
         },
@@ -205,6 +213,23 @@ document.getElementById("rzp-button1").onclick = async function (e){
         
 }
 
+
+
+function displayDownloadedFiles(files) {
+    const fileList = document.getElementById('downloadedFilesList');
+    fileList.innerHTML = '';
+    files.forEach(file => {
+        const listItem = document.createElement('li');
+        const link = document.createElement('a');
+        link.href = file.url;
+        link.textContent = `${file.url} - ${new Date(file.createdAt).toLocaleString()}`;
+        link.target = '_blank'; // Open link in a new tab
+        link.style.color = 'white';
+        listItem.appendChild(link);
+        fileList.appendChild(listItem);
+    });
+}
+
 //downloading expense of each user
 document.getElementById('downloadBtn1').addEventListener('click', async()=>{
     const token = localStorage.getItem('token');
@@ -212,14 +237,23 @@ document.getElementById('downloadBtn1').addEventListener('click', async()=>{
         const response  = await axios.get('http://localhost:4000/download-expense',{headers : {'Authorization': token}})
         const a = document.createElement('a')
         a.href = response.data.fileURL;
-        a.download = 'expense.csv';
-        
-        a.click()
+        a.download = 'expense.csv'; 
+        a.click() 
+         // Fetch and update the list of downloaded files
+        const filesResponse = await axios.get("http://localhost:4000/downloaded-files", { headers: { 'Authorization': token } });
+        displayDownloadedFiles(filesResponse.data); 
+
+       
     }
+
     catch(error){
         console.log(error)
     }
 })
+
+
+
+
 
 
 

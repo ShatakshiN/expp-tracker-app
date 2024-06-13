@@ -55,7 +55,15 @@ body{
 .offcanvas-body a {
   margin-right: 10px; /* Adjust as needed */
 }
-#downloadBtn{
-  margin-top: 10rem;
+#downloadBtn1{
+  margin-top: 5rem;
   margin-left: 25rem;
+}
+#downloadedFilesList{
+  color: aliceblue;
+}
+#showDownloadedLinksBtn{
+  margin-top: 2rem;
+  margin-left: 25rem;
+
 }

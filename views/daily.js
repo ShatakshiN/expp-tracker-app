@@ -15,6 +15,8 @@ window.addEventListener("DOMContentLoaded", async () => {
             //show you are now a premium user message
             document.getElementById('PremiumTag').classList.remove('visually-hidden');
 
+            document.getElementById('downloadBtn').classList.remove('visually-hidden');
+
             //show leaderboard
             //document.getElementById('leaderBoardTag').classList.remove('visually-hidden');
 
@@ -167,6 +169,7 @@ document.getElementById("rzp-button1").onclick = async function (e){
             alert('You are now a Premium user');
             document.getElementById('rzp-button1').style.display = 'none';
             document.getElementById('PremiumTag').classList.remove('visually-hidden');
+            document.getElementById('downloadBtn').classList.remove('visually-hidden');
             //document.getElementById('leaderBoardTag').classList.remove('visually-hidden');
 
         },
@@ -202,6 +205,21 @@ document.getElementById("rzp-button1").onclick = async function (e){
         
 }
 
+//downloading expense of each user
+document.getElementById('downloadBtn1').addEventListener('click', async()=>{
+    const token = localStorage.getItem('token');
+    try{
+        const response  = await axios.get('http://localhost:4000/download-expense',{headers : {'Authorization': token}})
+        const a = document.createElement('a')
+        a.href = response.data.fileURL;
+        a.download = 'expense.csv';
+        
+        a.click()
+    }
+    catch(error){
+        console.log(error)
+    }
+})
 
 
 

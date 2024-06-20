@@ -16,11 +16,8 @@ window.addEventListener("DOMContentLoaded", async () => {
 
             document.getElementById('downloadBtn').classList.remove('visually-hidden');
 
-<<<<<<< HEAD
             //document.getElementById('showDownloadedLinksBtn').classList.remove('visually-hidden');
 
-=======
->>>>>>> 07be2ecf3924c0a8acf4cf8f8a18d682e431ddb6
             //show leaderboard
             //document.getElementById('leaderBoardTag').classList.remove('visually-hidden');
 
@@ -177,12 +174,9 @@ document.getElementById("rzp-button1").onclick = async function (e){
             document.getElementById('rzp-button1').style.display = 'none';
             document.getElementById('PremiumTag').classList.remove('visually-hidden');
             document.getElementById('downloadBtn').classList.remove('visually-hidden');
-<<<<<<< HEAD
            
             
 
-=======
->>>>>>> 07be2ecf3924c0a8acf4cf8f8a18d682e431ddb6
             //document.getElementById('leaderBoardTag').classList.remove('visually-hidden');
 
         },

@@ -53,14 +53,27 @@ body{
 }
 #PremiumTag {
   color: aliceblue;
+  margin-inline-start: 7rem;
+}
+#premiumD{
+  background-color: rgba(125, 125, 125, 0.286);
+  backdrop-filter: blur(20px);
+  opacity: 0.5;
+  color: azure;
+  border: none;
+  
+  
 }
 .offcanvas-body a {
   margin-right: 10px; /* Adjust as needed */
 }
-#downloadBtn1{
+#NoOfExp{
+  margin-inline-start: 1rem;
+}
+/* #downloadBtn1{
   margin-top: 5rem;
   margin-left: 25rem;
-}
+} */
 #downloadedFilesList{
   color: aliceblue;
 }
@@ -68,4 +81,7 @@ body{
   margin-top: 2rem;
   margin-left: 25rem;
 
+}
+#leaderboardTable{
+  justify-content: start;
 }

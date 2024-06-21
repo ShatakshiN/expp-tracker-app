@@ -57,7 +57,7 @@
       <ul class="dropdown-menu" id="premiumD">
         <li><button class="btn" id="leaderboardbtn">SEE LEADERBOARD</button></li>
         <li> <button class="btn" id="downloadBtn1">DOWNLOAD REPORT</button></li>
-        <li> <button class="btn" id="downloadBtnShow">SEE PREVIOS DOWNLOADS</button></li>
+        <li> <button class="btn" id="downloadBtnShow">SEE PREVIOUS DOWNLOADS</button></li>
         
       </ul>
     </div>
@@ -112,22 +112,26 @@
         </li>
       </ul>
     </nav>
-    <div class="dropdown">
-      <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-        Dropdown button
-      </button>
-      <ul class="dropdown-menu">
-        <li><a class="dropdown-item" href="#">Action</a></li>
-        <li><a class="dropdown-item" href="#">Another action</a></li>
-        <li><a class="dropdown-item" href="#">Something else here</a></li>
-
-      </ul>
-    </div>
-    <div class="list-group col-6">
+    <!--div class="list-group col-6">
       <ul class="list-group col-6" id ="leaderboardTable"> 
 
       </ul>
+    </div-->
+    <div class="container-fluid col-6">
+      <button type="button" class="btn-close float-end" aria-label="Close" id="closeLeaderboardBtn"></button>
+      <table class="visually-hidden table table-dark table-striped col-3" id="leaderboardTable">
+        <thead>
+            <tr>
+                <th scope="col">Name</th>
+                <th scope="col">Total Expense</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Leaderboard rows will be inserted here dynamically -->
+        </tbody>
+    </table>
     </div>
+  
  
   
 
@@ -137,7 +141,23 @@
 
    
     
-    <ul id="downloadedFilesList"></ul>
+    <!--ul class="list-group visually-hidden" id="downloadedFilesList"></ul-->
+    <div class="container-fluid col-6">
+      <button type="button" class="btn-close float-end" aria-label="Close" id="closeDownloadedBtn"></button>
+      <table class="table table-dark  col-12" id="downloadedFilesTable">
+          <thead>
+              <tr>
+                  <th scope="col">Downloaded File</th>
+                  <th scope="col">Downloaded At</th>
+              </tr>
+          </thead>
+          <tbody id="downloadedFilesList">
+              <!-- Downloaded files will be inserted here dynamically -->
+          </tbody>
+      </table>
+    </div>
+
+    
     
 
     

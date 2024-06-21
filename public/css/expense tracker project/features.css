@@ -84,4 +84,20 @@ body{
 }
 #leaderboardTable{
   justify-content: start;
+  background-color: rgba(125, 125, 125, 0.286);
+  backdrop-filter: blur(20px);
+  opacity: 0.5;
+  color: aliceblue;
+
+
 }
+table{
+  width: 5rem;
+}
+td:nth-child(1) {
+  width: 5rem;
+}
+td:nth-child(2){
+  width: 3rem;
+}
+

@@ -1,3 +1,5 @@
+
+
 window.addEventListener("DOMContentLoaded", async () => {
     const token = localStorage.getItem('token');
     try {
@@ -13,17 +15,12 @@ window.addEventListener("DOMContentLoaded", async () => {
 
             //show you are now a premium user message
             document.getElementById('PremiumTag').classList.remove('visually-hidden');
-
-            document.getElementById('downloadBtn').classList.remove('visually-hidden');
-
-            //document.getElementById('showDownloadedLinksBtn').classList.remove('visually-hidden');
-
-            //show leaderboard
-            //document.getElementById('leaderBoardTag').classList.remove('visually-hidden');
+            //show leaderboard 
+            document.getElementById('leaderboardTable').classList.remove('visually-hidden');
 
             // Fetch and display the list of downloaded files
-            const filesResponse = await axios.get("http://localhost:4000/downloaded-files", { headers: { 'Authorization': token } });
-            displayDownloadedFiles(filesResponse.data); 
+            /* const filesResponse = await axios.get("http://localhost:4000/downloaded-files", { headers: { 'Authorization': token } });
+            displayDownloadedFiles(filesResponse.data);  */
           
         } else {
             // User is not premium, show the Go Premium button
@@ -99,25 +96,20 @@ function showExpenseOnScreen(obj){
 }
 
 
+function toggleLeaderboard() {
+    const leaderboardDiv = document.getElementById('leaderboardTable').parentNode;
+    leaderboardDiv.classList.toggle('d-none'); // Toggle Bootstrap class to hide/show
 
-/* document.getElementById('leaderboardbtn').addEventListener('click' , showLeaderboard)
-    async function showLeaderboard(){
-        const token=localStorage.getItem('token');
-        const userLeaderboard= await axios.get('http://localhost:4000/premium/LeaderBoard',{headers:{"Authorization":token}});
-        console.log("userLeaderboard",userLeaderboard);
-        var leaderboard_UL= document.getElementById('leaderboardTable');
-        leaderboard_UL.innerHTML+='<h5>Leader Board</h5>';
-        userLeaderboard.data.forEach((user) => {
-            const leaderboard_LI= document.createElement('li');
-            leaderboard_LI.innerText=`Name--${user.name} Total Expense--${user.total_cost}`
-            leaderboard_LI.style.color = 'white';
-            leaderboard_UL.appendChild(leaderboard_LI);
-        })
-    }; */
+    /* const linkBoardDiv = document.getElementById('downloadedFilesTable').parentNode;
+    linkBoardDiv.classList.toggle('d-none'); */
+}
 
-    document.getElementById('leaderboardbtn').addEventListener('click', showLeaderboard);
 
-    async function showLeaderboard() {
+document.getElementById('leaderboardbtn').addEventListener('click', showLeaderboard);
+
+
+
+async function showLeaderboard() {
         const token = localStorage.getItem('token');
         
         try {
@@ -127,29 +119,38 @@ function showExpenseOnScreen(obj){
     
             console.log("userLeaderboard", userLeaderboard);
     
-            var leaderboard_UL = document.getElementById('leaderboardTable');
-            
-            // Clear previous content
-            leaderboard_UL.innerHTML = '';
+            //var leaderboard_UL = document.getElementById('leaderboardTable');//abhi comm kiya
+            const leaderboardTable = document.getElementById('leaderboardTable').getElementsByTagName('tbody')[0];
+
+             // Clear previous content
+            leaderboardTable.innerHTML = '';
     
-            // Create and append the heading with white text color
-            const leaderboardHeading = document.createElement('h5');
-            leaderboardHeading.textContent = 'Leader Board';
-            leaderboardHeading.style.color = 'white';
-            leaderboard_UL.appendChild(leaderboardHeading);
-    
-            // Iterate over each user and create list items with white text color
+            // Populate the table with leaderboard data
             userLeaderboard.data.forEach((user) => {
-                const leaderboard_LI = document.createElement('li');
-                leaderboard_LI.innerText = `Name--${user.name}  Total Expense--${user.total_cost}`;
-                leaderboard_LI.style.color = 'white';
-                leaderboard_UL.appendChild(leaderboard_LI);
+                const row = leaderboardTable.insertRow();
+                const nameCell = row.insertCell(0);
+                const expenseCell = row.insertCell(1);
+
+                nameCell.textContent = user.name;
+                nameCell.style.color = 'white' 
+                expenseCell.textContent = user.total_cost;
             });
+
+            // Show the leaderboard table
+            const leaderboardDiv = document.getElementById('leaderboardTable').parentNode;
+            leaderboardDiv.classList.remove('d-none');
+
+
         } catch (error) {
             console.error('Error fetching leaderboard:', error);
         }
     }
-    
+
+// Event listener for close button
+document.getElementById('closeLeaderboardBtn').addEventListener('click', toggleLeaderboard);
+
+// Initial call to hide leaderboard table on page load
+toggleLeaderboard();
 
 
 document.getElementById("rzp-button1").onclick = async function (e){
@@ -173,11 +174,8 @@ document.getElementById("rzp-button1").onclick = async function (e){
             alert('You are now a Premium user');
             document.getElementById('rzp-button1').style.display = 'none';
             document.getElementById('PremiumTag').classList.remove('visually-hidden');
-            document.getElementById('downloadBtn').classList.remove('visually-hidden');
-           
-            
-
-            //document.getElementById('leaderBoardTag').classList.remove('visually-hidden');
+            document.getElementById('downloadBtn').classList.remove('visually-hidden'); 
+            document.getElementById('leaderboardTable').classList.remove('visually-hidden');
 
         },
 
@@ -229,7 +227,7 @@ document.getElementById('downloadBtn1').addEventListener('click', async()=>{
 })
 
 
-function displayDownloadedFiles(files) {
+/* function displayDownloadedFiles(files) {
     const fileList = document.getElementById('downloadedFilesList');
     fileList.innerHTML = '';
     files.forEach(file => {
@@ -264,7 +262,7 @@ document.getElementById('downloadBtn1').addEventListener('click', async()=>{
         console.log(error)
     }
 })
-
+ */
 
 
 

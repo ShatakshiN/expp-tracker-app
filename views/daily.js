@@ -2,6 +2,39 @@ let currentPage = 1;
 let entriesPerPage = 5; // Default entries per page
 let expenses = []; // Array to store all expenses
 
+// Function to fetch saved entries per page from local storage
+function loadEntriesPerPage() {
+    const storedEntriesPerPage = localStorage.getItem('entriesPerPage');
+    if (storedEntriesPerPage) {
+        entriesPerPage = parseInt(storedEntriesPerPage);
+        document.getElementById('entriesSelect').value = entriesPerPage; // Set the select element value
+    }
+}
+
+// Function to update entries per page and save to local storage
+function updateEntriesPerPage() {
+    entriesPerPage = parseInt(document.getElementById('entriesSelect').value);
+    currentPage = 1; // Reset to the first page when changing entries per page
+    localStorage.setItem('entriesPerPage', entriesPerPage);
+    displayExpenses();
+}
+
+// Add event listener to select element to update entries per page
+document.getElementById('entriesSelect').addEventListener('change', updateEntriesPerPage);
+
+// Event listener for page navigation buttons (next and previous)
+document.getElementById('nextPage').addEventListener('click', () => {
+    currentPage++;
+    displayExpenses();
+});
+
+document.getElementById('prevPage').addEventListener('click', () => {
+    if (currentPage > 1) {
+        currentPage--;
+        displayExpenses();
+    }
+});
+
 window.addEventListener("DOMContentLoaded", async () => {
     const token = localStorage.getItem('token');
     try {
@@ -38,6 +71,10 @@ window.addEventListener("DOMContentLoaded", async () => {
         for (let i = 0; i < expenseResponse.data.allUserOnScreen.length; i++) {
             showExpenseOnScreen(expenseResponse.data.allUserOnScreen[i]);
         }
+
+        // Load entries per page setting from local storage
+        loadEntriesPerPage();
+        displayExpenses(); // Display expenses with loaded settings
 
     } catch (error) {
         console.log(error);
@@ -145,11 +182,11 @@ function displayExpenses() {
         parentElem.appendChild(childElem);
     });
 }
-document.getElementById('entriesSelect').addEventListener('change', (event) => {
+/* document.getElementById('entriesSelect').addEventListener('change', (event) => {
     entriesPerPage = parseInt(event.target.value);
     currentPage = 1;
-    displayExpenses();
-});
+    displayExpenses(); 
+}); */
 
 
 

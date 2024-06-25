@@ -1,3 +1,7 @@
+let currentPage = 1;
+let entriesPerPage = 5; // Default entries per page
+let expenses = []; // Array to store all expenses
+
 window.addEventListener("DOMContentLoaded", async () => {
     const token = localStorage.getItem('token');
     try {
@@ -72,27 +76,81 @@ async function sendData(event){
 
 
 function showExpenseOnScreen(obj){
-    const parentElem = document.getElementById('expenseList');
-    const childElem = document.createElement('li');
-    childElem.textContent = `${obj.description} - ${obj.amount}`;
-    const delButton  = document.createElement('button');
-    childElem.className = "list-group-item";
-    delButton.textContent = 'DELETE';
-    delButton.addEventListener('click', async () => {
-        const token = localStorage.getItem('token');
-        try {
-            await axios.delete(`http://localhost:4000/delete-expense/${obj.id}`, {
-                headers: { 'Authorization': token }
-            });
-            // If successful, remove the expense item from the DOM
-            parentElem.removeChild(childElem);
-        } catch (error) {
-            console.error('Error deleting expense:', error);
-        }
-    });
-    childElem.appendChild(delButton);
-    parentElem.appendChild(childElem);
+    expenses.push(obj);
+    if (expenses.length <= currentPage * entriesPerPage && expenses.length > (currentPage - 1) * entriesPerPage){
+
+    
+        const parentElem = document.getElementById('expenseList');
+        const childElem = document.createElement('li');
+        childElem.textContent = `${obj.description} - ${obj.amount}`;
+        const delButton  = document.createElement('button');
+        childElem.className = "list-group-item";
+        delButton.textContent = 'DELETE';
+        delButton.addEventListener('click', async () => {
+            const token = localStorage.getItem('token');
+            try {
+                await axios.delete(`http://localhost:4000/delete-expense/${obj.id}`, {
+                    headers: { 'Authorization': token }
+                });
+                // If successful, remove the expense item from the DOM
+                parentElem.removeChild(childElem);
+            } catch (error) {
+                console.error('Error deleting expense:', error);
+            }
+        });
+        childElem.appendChild(delButton);
+        parentElem.appendChild(childElem);
+    }
 }
+
+document.getElementById('nextPage').addEventListener('click', () => {
+    currentPage++;
+    displayExpenses();
+});
+
+document.getElementById('prevPage').addEventListener('click', () => {
+    if (currentPage > 1) {
+        currentPage--;
+        displayExpenses();
+    }
+});
+
+function displayExpenses() {
+    const start = (currentPage - 1) * entriesPerPage;
+    const end = currentPage * entriesPerPage;
+    const visibleExpenses = expenses.slice(start, end);
+
+    const parentElem = document.getElementById('expenseList');
+    parentElem.innerHTML = ''; // Clear previous entries
+
+    visibleExpenses.forEach(expense => {
+        const childElem = document.createElement('li');
+        childElem.textContent = `${expense.description} - ${expense.amount}`;
+        childElem.className = "list-group-item";
+        const delButton = document.createElement('button');
+        delButton.textContent = 'DELETE';
+        delButton.addEventListener('click', async () => {
+            const token = localStorage.getItem('token');
+            try {
+                await axios.delete(`http://localhost:4000/delete-expense/${expense.id}`, {
+                    headers: { 'Authorization': token }
+                });
+                // If successful, remove the expense item from the DOM
+                parentElem.removeChild(childElem);
+            } catch (error) {
+                console.error('Error deleting expense:', error);
+            }
+        });
+        childElem.appendChild(delButton);
+        parentElem.appendChild(childElem);
+    });
+}
+document.getElementById('entriesSelect').addEventListener('change', (event) => {
+    entriesPerPage = parseInt(event.target.value);
+    currentPage = 1;
+    displayExpenses();
+});
+
 
 
 function toggleLeaderboard() {

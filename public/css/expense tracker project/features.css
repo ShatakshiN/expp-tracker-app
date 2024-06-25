@@ -53,7 +53,9 @@ body{
 }
 #PremiumTag {
   color: aliceblue;
-  margin-inline-start: 7rem;
+  margin-inline-start: 3rem;
+  margin-top: 2rem;
+  
 }
 #premiumD{
   background-color: rgba(125, 125, 125, 0.286);
@@ -74,6 +76,19 @@ body{
   margin-top: 5rem;
   margin-left: 25rem;
 } */
+
+#paginationTab{
+  margin-top: 2rem;
+}
+
+#noOfExpR{
+  margin-left: 3rem;
+  margin-top: 3rem;
+}
+#textEntries{
+  color: aliceblue;
+  margin-left: 1rem;
+}
 #downloadedFilesList{
   color: aliceblue;
 }

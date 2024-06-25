@@ -1,5 +1,3 @@
-
-
 window.addEventListener("DOMContentLoaded", async () => {
     const token = localStorage.getItem('token');
     try {
@@ -16,16 +14,17 @@ window.addEventListener("DOMContentLoaded", async () => {
             //show you are now a premium user message
             document.getElementById('PremiumTag').classList.remove('visually-hidden');
             //show leaderboard 
-            document.getElementById('leaderboardTable').classList.remove('visually-hidden');
+            document.getElementById('leaderboardTable').classList.remove('visually-hidden');  
 
-            // Fetch and display the list of downloaded files
-            /* const filesResponse = await axios.get("http://localhost:4000/downloaded-files", { headers: { 'Authorization': token } });
-            displayDownloadedFiles(filesResponse.data);  */
+            //show link board
+            document.getElementById('linkboardTable').classList.remove('visually-hidden');
+            //await showDownloadedLinks();
+
           
         } else {
             // User is not premium, show the Go Premium button
-            document.getElementById('rzp-button1').style.display = 'block';
-        
+            document.getElementById('rzp-button1').style.display = 'block'
+            
 
         }
 
@@ -99,15 +98,9 @@ function showExpenseOnScreen(obj){
 function toggleLeaderboard() {
     const leaderboardDiv = document.getElementById('leaderboardTable').parentNode;
     leaderboardDiv.classList.toggle('d-none'); // Toggle Bootstrap class to hide/show
-
-    /* const linkBoardDiv = document.getElementById('downloadedFilesTable').parentNode;
-    linkBoardDiv.classList.toggle('d-none'); */
 }
 
-
 document.getElementById('leaderboardbtn').addEventListener('click', showLeaderboard);
-
-
 
 async function showLeaderboard() {
         const token = localStorage.getItem('token');
@@ -226,47 +219,51 @@ document.getElementById('downloadBtn1').addEventListener('click', async()=>{
     }
 })
 
-
-/* function displayDownloadedFiles(files) {
-    const fileList = document.getElementById('downloadedFilesList');
-    fileList.innerHTML = '';
-    files.forEach(file => {
-        const listItem = document.createElement('li');
-        const link = document.createElement('a');
-        link.href = file.url;
-        link.textContent = `${file.url} - ${new Date(file.createdAt).toLocaleString()}`;
-        link.target = '_blank'; // Open link in a new tab
-        link.style.color = 'white';
-        listItem.appendChild(link);
-        fileList.appendChild(listItem);
-    });
+function toggleLinkboard(){
+    // Show the linkboard table
+    const linkboardDiv = document.getElementById('linkboardTable').parentNode;
+    linkboardDiv.classList.toggle('d-none');
 }
 
-//downloading expense of each user
-document.getElementById('downloadBtn1').addEventListener('click', async()=>{
+
+document.getElementById('downloadBtnShow').addEventListener('click', showDownloadedLinks);
+
+async function showDownloadedLinks(){
+
+
     const token = localStorage.getItem('token');
-    try{
-        const response  = await axios.get('http://localhost:4000/download-expense',{headers : {'Authorization': token}})
-        const a = document.createElement('a')
-        a.href = response.data.fileURL;
-        a.download = 'expense.csv'; 
-        a.click() 
-         // Fetch and update the list of downloaded files
-        const filesResponse = await axios.get("http://localhost:4000/downloaded-files", { headers: { 'Authorization': token } });
-        displayDownloadedFiles(filesResponse.data); 
+    try {
+        const response = await axios.get("http://localhost:4000/downloaded-files", { headers: { 'Authorization': token } });
+        const links = response.data;
 
-       
+        const linkboardTable = document.getElementById('linkboardTable').getElementsByTagName('tbody')[0];
+        linkboardTable.innerHTML = '';  // Clear any existing rows
+
+        links.forEach(link => {
+            const row = linkboardTable.insertRow();
+            const linkCell = row.insertCell(0);
+            const dateCell = row.insertCell(1);
+
+            const linkElement = document.createElement('a');
+            linkElement.href = link.url;
+            linkElement.textContent = link.url;
+            linkElement.target = "_blank";  // Open link in new tab
+
+            linkCell.appendChild(linkElement);
+            dateCell.textContent = new Date(link.createdAt).toLocaleDateString();
+        });
+
+        // Show the linkboard table
+        const linkboardDiv = document.getElementById('linkboardTable').parentNode;
+        linkboardDiv.classList.remove('d-none'); 
+    } catch (error) {
+        console.error('Error fetching downloaded links:', error);
     }
-
-    catch(error){
-        console.log(error)
-    }
-})
- */
+};
 
 
 
+document.getElementById('closeLinkboardBtn').addEventListener('click', toggleLinkboard);
 
-
-
-
+// Initial call to hide linkboard table on page load
+toggleLinkboard();

@@ -171,7 +171,7 @@ app.post('/daily-expense', authenticate, async(req,res,next)=>{
 
     }
     catch(error){
-        res.status(500),json({message : error})
+        res.status(500).json({message : error})
     }
 })
 

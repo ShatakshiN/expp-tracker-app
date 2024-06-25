@@ -356,8 +356,6 @@ async function showDownloadedLinks(){
     }
 };
 
-
-
 document.getElementById('closeLinkboardBtn').addEventListener('click', toggleLinkboard);
 
 // Initial call to hide linkboard table on page load

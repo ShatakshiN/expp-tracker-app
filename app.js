@@ -1,5 +1,8 @@
 const http = require('http');
 const express = require('express');
+const fs = require('fs');
+const nativePath = require('path')
+const path = require('./util/path')
 const app  = express();
 const cors = require('cors');
 const sequelize = require('./util/database');
@@ -10,6 +13,13 @@ const Razorpay = require('razorpay');
 //const Brevo = require('@getbrevo/brevo');
 var Brevo = require('@getbrevo/brevo');
 const aws = require('aws-sdk');
+
+//adds security to headers
+const helmet = require('helmet');
+
+//morgan for logging 
+const morgan = require('morgan');
+
 // Import dotenv and configure to load environment variables
 require('dotenv').config();
 
@@ -24,11 +34,17 @@ const resetPassword  = require('./models/forgot password');
 const FileURL = require('./models/fileURL');
 const { error, group } = require('console');
 const { where } = require('sequelize');
+const { Stream } = require('stream');
 
 
+const accessLogStream = fs.createWriteStream(nativePath.join(__dirname, 'access.log'),{flag :'a'});
 
 app.use(bodyParser.json());
 app.use(cors());
+app.use(helmet());
+app.use(morgan('combined', { stream: accessLogStream }));
+
+
 
 function isStrValid(str){
     if(str == undefined || str.length === 0){
@@ -127,7 +143,7 @@ async function authenticate(req,res,next) {
             throw new Error('Authorization token missing');
         }
         
-        const user = jwt.verify(token, 'secret key');
+        const user = jwt.verify(token, process.env.JWT_SECRET);
         console.log(user.userId);
 
         const foundUser = await Users.findByPk(user.userId); // Wait for the user lookup
@@ -407,7 +423,7 @@ app.get('/check-password-link/:resetId', async(req,res)=>{
 })
 
 function uploadToS3(data, fileName){
-    const BUCKET_NAME = "expensetrackershatakshi";
+    const BUCKET_NAME = "exptrackershatakshi";
     const IAM_USER_KEY = process.env.AWS_ACCESS_KEY;
     const IAM_USER_SECRET = process.env.AWS_SECRET_ACCESS_KEY;
 
@@ -495,7 +511,7 @@ Users.hasMany(FileURL);
 
 sequelize.sync()
     .then(()=>{
-        app.listen(4000)
+        app.listen(process.env.PORT || 4000)
         console.log('server is running on 4000')
 
     })

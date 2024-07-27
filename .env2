@@ -1,5 +1,0 @@
-PORT = 4000
-DBASE_NAME = node-complete
-DBASE_USERNAME = root
-DBASE_PASSWORD = Tuktuk123@
-DBASE_HOST = localhost

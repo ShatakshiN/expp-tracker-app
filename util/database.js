@@ -20,6 +20,6 @@ the MySQL database.
 require('dotenv').config();
 
 const Sequelize = require('sequelize')
-const sequelize = new Sequelize(process.env.DBASE_NAME,process.env.DBASE_USERNAME, process.env.DBASE_PASSWORD ,{dialect : 'mysql', host :process.env.DBASE_HOST}) // instance of Sequelize
+const sequelize = new Sequelize(process.env2.DBASE_NAME,process.env2.DBASE_USERNAME, process.env2.DBASE_PASSWORD ,{dialect : 'mysql', host :process.env2.DBASE_HOST}) // instance of Sequelize
 
 module.exports= sequelize;

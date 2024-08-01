@@ -2,7 +2,7 @@ const http = require('http');
 const express = require('express');
 const fs = require('fs');
 const nativePath = require('path')
-const path = require('./util/path')
+const customPath = require('./util/customPath')
 const app  = express();
 const cors = require('cors');
 const sequelize = require('./util/database');
@@ -41,8 +41,28 @@ const accessLogStream = fs.createWriteStream(nativePath.join(__dirname, 'access.
 
 app.use(bodyParser.json());
 app.use(cors());
-app.use(helmet());
+app.use(helmet({
+    contentSecurityPolicy: {
+        directives: {
+            defaultSrc: ["'self'"],
+            scriptSrc: ["'self'", "https://cdn.jsdelivr.net", "https://cdnjs.cloudflare.com"],
+            styleSrc: ["'self'", "https://cdn.jsdelivr.net"], // Example for style sources
+            // Add other directives as needed
+        },
+    },
+}));app.use(helmet({
+    contentSecurityPolicy: {
+        directives: {
+            defaultSrc: ["'self'"],
+            scriptSrc: ["'self'", "https://cdn.jsdelivr.net", "https://cdnjs.cloudflare.com"],
+            styleSrc: ["'self'", "https://cdn.jsdelivr.net"], // Example for style sources
+            // Add other directives as needed
+        },
+    },
+}));
 app.use(morgan('combined', { stream: accessLogStream }));
+
+app.use(express.static(nativePath.join(__dirname ,  'views')))
 
 
 

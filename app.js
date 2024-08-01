@@ -24,8 +24,6 @@ const morgan = require('morgan');
 require('dotenv').config();
 
 
-
-
 //models
 const Users = require('./models/users');
 const Expense = require('./models/expense');
@@ -42,15 +40,6 @@ const accessLogStream = fs.createWriteStream(nativePath.join(__dirname, 'access.
 app.use(bodyParser.json());
 app.use(cors());
 app.use(helmet({
-    contentSecurityPolicy: {
-        directives: {
-            defaultSrc: ["'self'"],
-            scriptSrc: ["'self'", "https://cdn.jsdelivr.net", "https://cdnjs.cloudflare.com"],
-            styleSrc: ["'self'", "https://cdn.jsdelivr.net"], // Example for style sources
-            // Add other directives as needed
-        },
-    },
-}));app.use(helmet({
     contentSecurityPolicy: {
         directives: {
             defaultSrc: ["'self'"],

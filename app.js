@@ -13,6 +13,7 @@ const Razorpay = require('razorpay');
 //const Brevo = require('@getbrevo/brevo');
 var Brevo = require('@getbrevo/brevo');
 const aws = require('aws-sdk');
+const favicon = require('serve-favicon');
 
 //adds security to headers
 const helmet = require('helmet');
@@ -51,7 +52,6 @@ app.use(helmet({
 }));
 app.use(morgan('combined', { stream: accessLogStream }));
 
-app.use(express.static(nativePath.join(__dirname ,  'views')))
 
 
 
@@ -63,11 +63,15 @@ function isStrValid(str){
     }
 }
 
+app.get('/favicon.ico', (req, res) => res.status(204));
+
+
 app.post('/signUp', async(req,res,next)=>{
     try{
         const name = req.body.name;
         const email = req.body.email;
         const password = req.body.password;
+        console.log('backend' , { name, email, password });
 
         if (isStrValid(email)|| isStrValid(name) || isStrValid(password) ){
             return res.status(400).json({err : "bad parameter"})
@@ -503,6 +507,13 @@ app.get('/downloaded-files', authenticate, async (req, res) => {
 });
 
 
+app.use(favicon(nativePath.join(__dirname, 'views', 'favicon.ico')));
+
+//app.use(express.static(nativePath.join(__dirname ,  'views')))
+
+app.use((req,res,next)=>{
+    res.sendFile(nativePath.join(__dirname , `views/${req.url}`))
+})
 
 
 

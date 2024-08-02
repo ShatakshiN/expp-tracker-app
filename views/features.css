@@ -3,7 +3,7 @@ svg.bi {
   color: rgb(255, 254, 254); /* Change color to red */
 }
 body{
-  background: url('./p4.avif') #282727aa ;
+  background: url('./public/p4.avif') #282727aa ;
   background-blend-mode: multiply;
   background-position: center;
   background-size: cover;

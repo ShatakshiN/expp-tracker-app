@@ -4,6 +4,8 @@ async function sendUserData(event){
     const email = event.target.mail.value; 
     const password = event.target.password.value;
     
+    console.log('frontend', { name, email, password }); 
+    
     obj = {
         name,
         email,

@@ -81,34 +81,39 @@ window.addEventListener("DOMContentLoaded", async () => {
     }
 });
 
-async function sendData(event){
-    event.preventDefault();
-    const date  = event.target.date.value;
-    const description = event.target.description.value;
-    const amount = event.target.amount.value;
-    const category = event.target.categories.value;
+document.addEventListener('DOMContentLoaded', ()=>{
+    const expForm = document.getElementById('expForm');
+    expForm.onsubmit = sendData;
 
-
-    obj = {
-        date,
-        description,
-        amount,
-        category,
-       
+    async function sendData(event){
+        event.preventDefault();
+        const date  = event.target.date.value;
+        const description = event.target.description.value;
+        const amount = event.target.amount.value;
+        const category = event.target.categories.value;
+    
+    
+        obj = {
+            date,
+            description,
+            amount,
+            category,
+           
+        }
+    
+        try{
+            const token = localStorage.getItem('token')
+            const response = await axios.post('http://localhost:4000/daily-expense',obj, {headers : {'Authorization': token}});
+            console.log(response.data.expense)
+            showExpenseOnScreen(response.data.expense);
+    
+    
+        }catch(error){
+            console.log(error);
+        }
+    
     }
-
-    try{
-        const token = localStorage.getItem('token')
-        const response = await axios.post('http://localhost:4000/daily-expense',obj, {headers : {'Authorization': token}});
-        console.log(response.data.expense)
-        showExpenseOnScreen(response.data.expense);
-
-
-    }catch(error){
-        console.log(error);
-    }
-
-};
+});
 
 
 

@@ -2,6 +2,9 @@
 svg.bi {
   color: rgb(255, 254, 254); /* Change color to red */
 }
+.navbar{
+  background-color: rgba(0, 0, 0, 0.5)
+}
 body{
   background: url('./public/p4.avif') #282727aa ;
   background-blend-mode: multiply;

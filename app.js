@@ -10,16 +10,23 @@ const bodyParser = require('body-parser');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const Razorpay = require('razorpay');
+
+
+const { S3Client, PutObjectCommand } = require('@aws-sdk/client-s3');
+//const { getSignedUrl } = require('@aws-sdk/s3-request-presigner');
+
+
 //const Brevo = require('@getbrevo/brevo');
 var Brevo = require('@getbrevo/brevo');
-const aws = require('aws-sdk');
+
+//const aws = require('aws-sdk');
 const favicon = require('serve-favicon');
 
 //adds security to headers
-const helmet = require('helmet');
+//const helmet = require('helmet');
 
 //morgan for logging 
-const morgan = require('morgan');
+//const morgan = require('morgan');
 
 // Import dotenv and configure to load environment variables
 require('dotenv').config();
@@ -39,18 +46,21 @@ const { Stream } = require('stream');
 const accessLogStream = fs.createWriteStream(nativePath.join(__dirname, 'access.log'),{flag :'a'});
 
 app.use(bodyParser.json());
+
+
 app.use(cors());
-app.use(helmet({
+
+/* app.use(helmet({
     contentSecurityPolicy: {
         directives: {
             defaultSrc: ["'self'"],
             scriptSrc: ["'self'", "https://cdn.jsdelivr.net", "https://cdnjs.cloudflare.com"],
-            styleSrc: ["'self'", "https://cdn.jsdelivr.net"], // Example for style sources
-            // Add other directives as needed
+            styleSrc: ["'self'", "https://cdn.jsdelivr.net"], 
+            
         },
     },
 }));
-app.use(morgan('combined', { stream: accessLogStream }));
+app.use(morgan('combined', { stream: accessLogStream })); */
 
 
 
@@ -440,7 +450,7 @@ function uploadToS3(data, fileName){
     const IAM_USER_KEY = process.env.AWS_ACCESS_KEY;
     const IAM_USER_SECRET = process.env.AWS_SECRET_ACCESS_KEY;
 
-    let s3bucket = new aws.S3({
+    const s3Client = new S3Client({
         accessKeyId: IAM_USER_KEY,
         secretAccessKey: IAM_USER_SECRET,
     })
@@ -452,13 +462,13 @@ function uploadToS3(data, fileName){
         ACL: 'public-read'
     }
     return new Promise((resolve, reject)=>{
-        s3bucket.upload(params,(err,s3Response)=>{
+        s3bucket.upload(new PutObjectCommand(params),(err,data)=>{
             if(err){
                 console.log("Something is Wrong",err);
                 reject(err);
             }
             else{
-                console.log("Success",s3Response);
+                console.log("Success", data);
                 resolve(s3Response.Location);
             }
         })

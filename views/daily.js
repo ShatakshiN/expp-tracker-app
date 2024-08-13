@@ -38,7 +38,7 @@ document.getElementById('prevPage').addEventListener('click', () => {
 window.addEventListener("DOMContentLoaded", async () => {
     const token = localStorage.getItem('token');
     try {
-        const response = await axios.get("http://localhost:4000/check-premium-status", { headers: { 'Authorization': token } });
+        const response = await axios.get("http://3.81.210.55/check-premium-status", { headers: { 'Authorization': token } });
         
         const isPremium = response.data.isPremium
        
@@ -66,7 +66,7 @@ window.addEventListener("DOMContentLoaded", async () => {
         }
 
         // Fetch and display user expenses
-        const expenseResponse = await axios.get("http://localhost:4000/daily-expense", { headers: { 'Authorization': token } });
+        const expenseResponse = await axios.get("http://3.81.210.55/daily-expense", { headers: { 'Authorization': token } });
 
         for (let i = 0; i < expenseResponse.data.allUserOnScreen.length; i++) {
             showExpenseOnScreen(expenseResponse.data.allUserOnScreen[i]);
@@ -103,7 +103,7 @@ document.addEventListener('DOMContentLoaded', ()=>{
     
         try{
             const token = localStorage.getItem('token')
-            const response = await axios.post('http://localhost:4000/daily-expense',obj, {headers : {'Authorization': token}});
+            const response = await axios.post('http://3.81.210.55/daily-expense',obj, {headers : {'Authorization': token}});
             console.log(response.data.expense)
             showExpenseOnScreen(response.data.expense);
     
@@ -131,7 +131,7 @@ function showExpenseOnScreen(obj){
         delButton.addEventListener('click', async () => {
             const token = localStorage.getItem('token');
             try {
-                await axios.delete(`http://localhost:4000/delete-expense/${obj.id}`, {
+                await axios.delete(`http://3.81.210.55/delete-expense/${obj.id}`, {
                     headers: { 'Authorization': token }
                 });
                 // If successful, remove the expense item from the DOM
@@ -174,7 +174,7 @@ function displayExpenses() {
         delButton.addEventListener('click', async () => {
             const token = localStorage.getItem('token');
             try {
-                await axios.delete(`http://localhost:4000/delete-expense/${expense.id}`, {
+                await axios.delete(`http://3.81.210.55/delete-expense/${expense.id}`, {
                     headers: { 'Authorization': token }
                 });
                 // If successful, remove the expense item from the DOM
@@ -206,7 +206,7 @@ async function showLeaderboard() {
         const token = localStorage.getItem('token');
         
         try {
-            const userLeaderboard = await axios.get('http://localhost:4000/premium/LeaderBoard', {
+            const userLeaderboard = await axios.get('http://3.81.210.55/premium/LeaderBoard', {
                 headers: { "Authorization": token }
             });
     
@@ -249,7 +249,7 @@ toggleLeaderboard();
 document.getElementById("rzp-button1").onclick = async function (e){
     const token = localStorage.getItem('token');
     //console.log(token);
-    const response = await axios.get('http://localhost:4000/buy-premium', {headers : {'Authorization': token}});
+    const response = await axios.get('http://3.81.210.55/buy-premium', {headers : {'Authorization': token}});
     //console.log(response);
     console.log('payment id' +  response.razorpay_payment_id)
     var options = {
@@ -307,7 +307,7 @@ document.getElementById("rzp-button1").onclick = async function (e){
 document.getElementById('downloadBtn1').addEventListener('click', async()=>{
     const token = localStorage.getItem('token');
     try{
-        const response  = await axios.get('http://localhost:4000/download-expense',{headers : {'Authorization': token}})
+        const response  = await axios.get('http://3.81.210.55/download-expense',{headers : {'Authorization': token}})
         const a = document.createElement('a')
         a.href = response.data.fileURL;
         a.download = 'expense.csv';
@@ -333,7 +333,7 @@ async function showDownloadedLinks(){
 
     const token = localStorage.getItem('token');
     try {
-        const response = await axios.get("http://localhost:4000/downloaded-files", { headers: { 'Authorization': token } });
+        const response = await axios.get("http://3.81.210.55/downloaded-files", { headers: { 'Authorization': token } });
         const links = response.data;
 
         const linkboardTable = document.getElementById('linkboardTable').getElementsByTagName('tbody')[0];

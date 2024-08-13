@@ -14,7 +14,7 @@ window.addEventListener('load' , async()=>{
     const res = await axios.get(`http://3.81.210.55/check-password-link/${resetId}`)
     if(!res.data.isActive){
         alert("link expired get a new one")
-        location.href ='forgot password.html'
+        location.href ='forgotpassword.html'
     }
     console.log(res)
 

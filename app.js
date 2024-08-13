@@ -474,10 +474,8 @@ function uploadToS3(data, fileName){
             });
     });
 }
-   
 
 
-}
 
 //downloading expense for each user
 app.get('/download-expense',authenticate, async(req,res,next)=>{

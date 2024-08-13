@@ -451,8 +451,8 @@ function uploadToS3(data, fileName){
     const IAM_USER_SECRET = process.env.AWS_SECRET_ACCESS_KEY;
 
     const s3Client = new S3Client({
-        accessKeyId: IAM_USER_KEY,
-        secretAccessKey: IAM_USER_SECRET,
+        accessKeyId: process.env.IAM_USER_KEY,
+        secretAccessKey: process.env.IAM_USER_SECRET,
     })
 
     var params={
@@ -461,19 +461,20 @@ function uploadToS3(data, fileName){
         Body: data,
         ACL: 'public-read'
     }
-    return new Promise((resolve, reject)=>{
-        s3bucket.upload(new PutObjectCommand(params),(err,data)=>{
-            if(err){
-                console.log("Something is Wrong",err);
-                reject(err);
-            }
-            else{
+    return new Promise((resolve, reject) => {
+        s3Client.send(new PutObjectCommand(params))
+            .then((data) => {
+                const fileURL = `https://${BUCKET_NAME}.s3.amazonaws.com/${fileName}`;
                 console.log("Success", data);
-                resolve(s3Response.Location);
-            }
-        })
-
-    })
+                resolve(fileURL);
+            })
+            .catch((err) => {
+                console.log("Something is Wrong", err);
+                reject(err);
+            });
+    });
+}
+   
 
 
 }

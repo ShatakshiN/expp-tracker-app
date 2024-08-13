@@ -453,8 +453,8 @@ function uploadToS3(data, fileName){
     const s3Client = new S3Client({
         region: "ap-south-1", // replace with your bucket's region
         credentials: {
-            accessKeyId: process.env.AWS_ACCESS_KEY,
-            secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+            accessKeyId: IAM_USER_KEY ,
+            secretAccessKey:  IAM_USER_SECRET,
         },
     })
 

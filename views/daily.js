@@ -1,4 +1,4 @@
-//for pagination
+//for paginations
 let currentPage = 1;
 let entriesPerPage = 5; // Default entries per page
 let expenses = []; // Array to store all expenses

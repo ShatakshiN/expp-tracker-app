@@ -47,7 +47,7 @@ document.addEventListener('DOMContentLoaded', () => {
         };
 
         try {
-            const response = await axios.post('http://3.81.210.55/signUp', obj);
+            const response = await axios.post('http://3.81.210.55:4000/signUp', obj);
             if (response.data.message === 'user already exists') {
                 alert("User already exists!");
             } else {

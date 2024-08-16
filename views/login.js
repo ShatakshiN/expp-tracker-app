@@ -93,7 +93,7 @@ document.addEventListener('DOMContentLoaded', () => {
         };
 
         try {
-            const response = await axios.post('http://3.81.210.55/login', obj);
+            const response = await axios.post('http://3.81.210.55:4000/login', obj);
             console.log('Response:', response); // Check the response
             if (response.status === 200) {
                 localStorage.setItem('token', response.data.token);

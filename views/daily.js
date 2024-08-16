@@ -39,7 +39,7 @@ document.getElementById('prevPage').addEventListener('click', () => {
 window.addEventListener("DOMContentLoaded", async () => {
     const token = localStorage.getItem('token');
     try {
-        const response = await axios.get("http://3.81.210.55/check-premium-status", { headers: { 'Authorization': token } });
+        const response = await axios.get("http://3.81.210.55:4000/check-premium-status", { headers: { 'Authorization': token } });
         
         const isPremium = response.data.isPremium
        

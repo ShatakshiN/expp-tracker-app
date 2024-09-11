@@ -319,7 +319,7 @@ app.post('/forgotPassword', async (req, res, next) => {
 
         let sendSmtpEmail = new Brevo.SendSmtpEmail();
         sendSmtpEmail.subject = "Reset password";
-        sendSmtpEmail.htmlContent = `<p>Click the link to reset your password</p><a href="http://localhost:4000/resetpassword.html?reset=${link.id}">click here</a>`;
+        sendSmtpEmail.htmlContent = `<p>Click the link to reset your password</p><a href="http://3.81.210.55:4000/resetpassword.html?reset=${link.id}">click here</a>`;
         sendSmtpEmail.sender = { "name": "Shatakshi", "email": "shatakshinimare27@gmail.com" };
         sendSmtpEmail.to = [{ "email": email }];
 

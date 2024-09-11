@@ -469,9 +469,10 @@ app.use(favicon(nativePath.join(__dirname, 'views', 'favicon.ico')));
 
 //app.use(express.static(nativePath.join(__dirname ,  'views')))
 
-app.use((req,res,next)=>{
-    res.sendFile(nativePath.join(__dirname , `views/${req.url}`))
-})
+app.use((req, res, next) => {
+    res.sendFile(nativePath.join(__dirname, 'views', req.path));
+});
+
 
 
 

@@ -5,7 +5,7 @@ async function forgotPassword(event){
         email
     }
     try{
-        const send_email= await axios.post('http://3.81.210.55/forgotPassword',obj);
+        const send_email= await axios.post('http://3.81.210.55:4000/forgotPassword',obj);
         console.log(send_email)
 
     }catch(err){

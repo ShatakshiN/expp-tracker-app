@@ -1,0 +1,29 @@
+.navbar{
+    background-color: rgba(0, 0, 0, 0.5)
+  }
+body{
+    background: url('./public/p4.avif') #282727aa ;
+    background-blend-mode: multiply;
+    background-position: center;
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-attachment: fixed; 
+  
+}
+@media (max-width:991px){
+    .sidebar{
+      background-color: rgb(225, 225,225,0.15);
+      backdrop-filter: blur(10px);
+    }
+}
+
+#MonthTable{
+  margin-top: 5rem;
+  justify-content: start;
+  background-color: rgba(125, 125, 125, 0.286);
+  backdrop-filter: blur(20px);
+  opacity: 0.5;
+  color: aliceblue;
+
+
+}

@@ -62,94 +62,62 @@ app.use(cors());
 }));
 app.use(morgan('combined', { stream: accessLogStream })); */
 
-
-
-
-function isStrValid(str){
-    if(str == undefined || str.length === 0){
-        return true
-    }else{
-        return false
-    }
+app.get('/favicon.ico', (req, res) => res.status(204));
+function isStrValid(str) {
+    return (str === undefined || str.length === 0);
 }
 
-app.get('/favicon.ico', (req, res) => res.status(204));
+app.post('/signUp', async (req, res, next) => {
+    try {
+        const { name, email, password } = req.body;
+        console.log('backend', { name, email, password });
 
-
-app.post('/signUp', async(req,res,next)=>{
-    try{
-        const name = req.body.name;
-        const email = req.body.email;
-        const password = req.body.password;
-        console.log('backend' , { name, email, password });
-
-        if (isStrValid(email)|| isStrValid(name) || isStrValid(password) ){
-            return res.status(400).json({err : "bad parameter"})
-
+        if (isStrValid(email) || isStrValid(name) || isStrValid(password)) {
+            return res.status(400).json({ err: "bad parameter" });
         }
 
-         // Check if the email already exists
-        const existingUser = await Users.findOne({
-            where: {
-                email: email,
-            }
+        // Check if the email already exists
+        const existingUser = await Users.findOne({ where: { email } });
+        if (existingUser) {
+            return res.status(400).json({ message: "user already exists" });
+        }
+
+        bcrypt.hash(password, 10, async (error, hash) => {
+            await Users.create({ name, email, passWord: hash });
         });
 
-        if (existingUser) {
-            return res.status(400).json({message : "user already exists"})
-        } 
-
-        bcrypt.hash(password, 10, async(error, hash)=>{
-            const userData = await Users.create({
-                name : name,
-                email : email,
-                passWord : hash,
-             
-
-            })
-
-        })
-        return res.status(201).json({msg: "sign up successful"})
-
-       
-
-    }catch(error){
-        return res.status(500).json({error : error.message})
+        return res.status(201).json({ msg: "sign up successful" });
+    } catch (error) {
+        return res.status(500).json({ error: error.message });
     }
-
 });
 
-function generateAccessToken(id){
-    return jwt.sign({userId: id }, 'secret key')
+function generateAccessToken(id) {
+    return jwt.sign({ userId: id }, process.env.JWT_SECRET);
 }
 
 app.post('/login', async (req, res, next) => {
     try {
-        
-        const email = req.body.email;
-        const password = req.body.password;
-       
+        const { email, password } = req.body;
 
-        if(isStrValid(email) || isStrValid(password)){
-            return req.status(400).json({message : "bad parameters"})
+        if (isStrValid(email) || isStrValid(password)) {
+            return res.status(400).json({ message: "bad parameters" });
         }
 
-        const loginCredentials = await Users.findAll({
-            where: { email: email }
-        });
+        const loginCredentials = await Users.findAll({ where: { email } });
 
-        if(loginCredentials.length > 0){
-            bcrypt.compare(password, loginCredentials[0].passWord, (err, result )=>{ //the result will be true / false
-                if(err){
-                    res.status(500).json({msg : "something went wrong"})
+        if (loginCredentials.length > 0) {
+            bcrypt.compare(password, loginCredentials[0].passWord, (err, result) => {
+                if (err) {
+                    res.status(500).json({ msg: "something went wrong" });
                 }
-                if(result === true){
-                    res.status(200).json({msg: "user logged in successfully", token: generateAccessToken(loginCredentials[0].id) })
-                }else {
+                if (result === true) {
+                    res.status(200).json({ msg: "user logged in successfully", token: generateAccessToken(loginCredentials[0].id) });
+                } else {
                     return res.status(400).json({ msg: 'password incorrect' });
                 }
-            })
-        }else {
+            });
+        } else {
             return res.status(404).json({ msg: "user doesn't exist" });
         }
     } catch (error) {
@@ -157,87 +125,66 @@ app.post('/login', async (req, res, next) => {
     }
 });
 
-async function authenticate(req,res,next) {
+async function authenticate(req, res, next) {
     try {
         const token = req.header('Authorization');
         console.log(token);
-        
+
         if (!token) {
             throw new Error('Authorization token missing');
         }
-        
+
         const user = jwt.verify(token, process.env.JWT_SECRET);
         console.log(user.userId);
 
-        const foundUser = await Users.findByPk(user.userId); // Wait for the user lookup
+        const foundUser = await Users.findByPk(user.userId);
         if (!foundUser) {
-            throw new Error('User not found'); // Handle if user is not found
+            throw new Error('User not found');
         }
 
-        console.log(JSON.stringify(foundUser));
-        req.user = foundUser; // Assign the user to the request for global use
+        req.user = foundUser;
         next();
     } catch (err) {
         console.log(err);
         return res.status(401).json({ success: false });
     }
+}
 
-} 
-
-
-
-app.post('/daily-expense', authenticate, async(req,res,next)=>{
-
-    try{
-        const description = req.body.description;
-        const amount = req.body.amount;
-        const date = req.body.date;
-        const category = req.body.category;
-        const id = req.body.userId;
+app.post('/daily-expense', authenticate, async (req, res, next) => {
+    try {
+        const { description, amount, date, category } = req.body;
 
         const expenseData = await Expense.create({
-            date : date,
-            description: description,
-            amount : amount,
-            category : category,
-            SignUpId : req.user.id
+            date,
+            description,
+            amount,
+            category,
+            SignUpId: req.user.id
+        });
 
-                     
-        })
-        //await Expense.setUsers(userData)
-
-        res.status(201).json({expense:expenseData})       
-
+        res.status(201).json({ expense: expenseData });
+    } catch (error) {
+        res.status(500).json({ message: error });
     }
-    catch(error){
-        res.status(500).json({message : error})
-    }
-})
-
-
-app.get('/daily-expense',authenticate,async(req,res,next) =>{
-    const userId = req.user.id;
-    try{
-        const users = await Expense.findAll({where : {SignUpId : userId}});
-        res.status(200).json({allUserOnScreen : users})
-    }catch(error){
-        res.status(500).json({error : error.message})
-    };
-
 });
 
-
+app.get('/daily-expense', authenticate, async (req, res, next) => {
+    try {
+        const users = await Expense.findAll({ where: { SignUpId: req.user.id } });
+        res.status(200).json({ allUserOnScreen: users });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
 
 app.delete('/delete-expense/:expenseId', authenticate, async (req, res, next) => {
     try {
         const expenseId = req.params.expenseId;
-        const userId = req.user.id;
 
-        // Find the expense to be deleted
         const expenseToDelete = await Expense.findOne({
             where: {
                 id: expenseId,
-                SignUpId: userId
+                SignUpId: req.user.id
             }
         });
 
@@ -245,16 +192,12 @@ app.delete('/delete-expense/:expenseId', authenticate, async (req, res, next) =>
             return res.status(404).json({ message: "Expense not found" });
         }
 
-        // Delete the expense
         await expenseToDelete.destroy();
-
         return res.status(200).json({ message: "Expense deleted successfully" });
     } catch (error) {
-        console.log(error);
         res.status(500).json({ message: "Failed to delete expense", error: error.message });
     }
 });
-
 
 //purchase premium 
 
@@ -360,88 +303,72 @@ app.get('/premium/LeaderBoard', authenticate ,async(req,res,next)=>{
 
 });
 
-app.post('/forgotPassword' , async(req,res,next)=>{
-    try{
+app.post('/forgotPassword', async (req, res, next) => {
+    try {
         const email = req.body.email;
-        console.log(email);
-        const user = await Users.findOne({where : {email : email}},{
-            include : [
-                {model : resetPassword}
-            ]
-        })
-        console.log(user)
-        console.log(user== null)
-        if(user === null)
-             return res.status(404).json({success : false , msg :"Email not found"})
+        const user = await Users.findOne({ where: { email } });
 
-        
+        if (!user) {
+            return res.status(404).json({ success: false, msg: "Email not found" });
+        }
+
         var apiInstance = new Brevo.TransactionalEmailsApi();
-        apiInstance.setApiKey(Brevo.AccountApiApiKeys.apiKey,process.env.BREVO_API_KEY);
-        
+        apiInstance.setApiKey(Brevo.AccountApiApiKeys.apiKey, process.env.BREVO_API_KEY);
+
         const link = await user.createResetPassword();
 
-        let sendSmtpEmail = new Brevo.SendSmtpEmail(); 
-        sendSmtpEmail.subject = "reset password";
-        sendSmtpEmail.htmlContent = '<p>Click the link to reset your password</p>'+
-        `<a href="http://3.81.210.55/resetpassword.html?reset=${link.id}">click here</a>`;
-        sendSmtpEmail.sender = {"name":"Shatakshi","email":"shatakshinimare27@gmail.com"};
-        sendSmtpEmail.to = [{"email": email }];
+        let sendSmtpEmail = new Brevo.SendSmtpEmail();
+        sendSmtpEmail.subject = "Reset password";
+        sendSmtpEmail.htmlContent = `<p>Click the link to reset your password</p><a href="http://localhost:4000/resetpassword.html?reset=${link.id}">click here</a>`;
+        sendSmtpEmail.sender = { "name": "Shatakshi", "email": "shatakshinimare27@gmail.com" };
+        sendSmtpEmail.to = [{ "email": email }];
 
         const data = await apiInstance.sendTransacEmail(sendSmtpEmail);
         return res.status(200).json(JSON.stringify(data));
-
-    }catch(e){
-        console.log(e)
-        return res.status(500).json({success : false ,msg :"Internal server error"})
+    } catch (e) {
+        return res.status(500).json({ success: false, msg: "Internal server error" });
     }
-        
 });
 
 app.post('/reset-password/:resetId' , async(req,res)=>{
-    const t = await sequelize.transaction()
-    try{
-        const resetId = req.params.resetId;
-        const newPassword = req.body.newPassword
-        const confirmPassword = req.body.confirmPassword
+   const t = await sequelize.transaction();
+    try {
+        const { resetId } = req.params;
+        const { newPassword, confirmPassword } = req.body;
 
-        const resetUser = await resetPassword.findByPk(resetId)
-        if (!resetUser) {
-            return res.status(404).json({ success: false, msg: "User not found" });
-    }
-        if(!resetUser.isActive){
-            return res.status(401).json({success : false , msg:"link expired create a new one"})
+        const resetUser = await resetPassword.findByPk(resetId);
+        if (!resetUser || !resetUser.isActive) {
+            return res.status(401).json({ success: false, msg: "Link expired or invalid" });
         }
-        if(newPassword !== confirmPassword)
-        return res.status(403).json({success : false , msg:"new and confirm password are different"})
-    
-    //const user = await resetUser.getUser() //error here 
-    const userId = resetUser.SignUpId; // Assuming the foreign key is stored as SignUpId
-    const user = await Users.findByPk(userId);
-    if (!user) {
+
+        if (newPassword !== confirmPassword) {
+            return res.status(403).json({ success: false, msg: "New and confirm password are different" });
+        }
+
+        const userId = resetUser.SignUpId;
+        const user = await Users.findByPk(userId);
+        if (!user) {
             return res.status(404).json({ success: false, msg: "User not found" });
-    }
-    const hash = await bcrypt.hash(newPassword,10)
+        }
 
-    await Users.update({password : hash},{ where: { id: user.id }},{transaction :t})
-    await resetUser.update({isActive : false},{transaction : t})
+        const hash = await bcrypt.hash(newPassword, 10);
+        await Users.update({ passWord: hash }, { where: { id: user.id }, transaction: t });
+        await resetUser.update({ isActive: false }, { transaction: t });
 
-    await t.commit()
-
-    return res.json({success : true , msg:"Password changed successfully"})
-    }catch(e){
-        console.log(e)
-        await t.rollback()
-        return res.status(500).json({success : false , msg : "Internal server error"})
+        await t.commit();
+        return res.json({ success: true, msg: "Password changed successfully" });
+    } catch (e) {
+        await t.rollback();
+        return res.status(500).json({ success: false, msg: "Internal server error" });
     }
 })
 
 app.get('/check-password-link/:resetId', async(req,res)=>{
-    try{
-        const resetUser = await resetPassword.findByPk(req.params.resetId)
-        return res.json({isActive : resetUser.isActive})
-    }catch(e){
-        console.log(e)
-        return res.status(500).json({success : false , msg : "Internal server error"})
+    try {
+        const resetUser = await resetPassword.findByPk(req.params.resetId);
+        return res.json({ isActive: resetUser.isActive });
+    } catch (e) {
+        return res.status(500).json({ success: false, msg: "Internal server error" });
     }
 })
 

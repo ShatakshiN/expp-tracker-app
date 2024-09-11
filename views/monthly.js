@@ -5,7 +5,7 @@ document.addEventListener("DOMContentLoaded", () => {
     async function fetchMonthlyExpenses() {
         try {
             const token = localStorage.getItem("token");
-            const response = await fetch('http://http://3.81.210.55:4000/monthly-expense', {
+            const response = await fetch('http://3.81.210.55:4000/monthly-expense', {
                 headers: {
                     "Authorization": token
                 }

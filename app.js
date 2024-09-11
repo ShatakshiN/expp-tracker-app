@@ -199,6 +199,25 @@ app.delete('/delete-expense/:expenseId', authenticate, async (req, res, next) =>
     }
 });
 
+//monthly 
+app.get('/monthly-expense', authenticate, async (req, res) => {
+    try {
+        const userId = req.user.id;
+        const monthlyExpenses = await Expense.findAll({
+            where: { SignUpId: userId },
+            attributes: [
+                [sequelize.fn('DATE_FORMAT', sequelize.col('date'), '%Y-%m'), 'month'],  // Group by year-month
+                [sequelize.fn('sum', sequelize.col('amount')), 'totalExpense']
+            ],
+            group: 'month',
+            order: [['month', 'ASC']]
+        });
+        res.status(200).json({ monthlyExpenses });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+});
+
 //purchase premium 
 
 app.get('/buy-premium', authenticate, async (req, res, next) => {

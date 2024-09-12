@@ -218,6 +218,25 @@ app.get('/monthly-expense', authenticate, async (req, res) => {
     }
 });
 
+//yearly expense 
+app.get('/yearly-expense', authenticate, async (req, res) => {
+    try {
+        const userId = req.user.id;
+        const yearlyExpenses = await Expense.findAll({
+            where: { SignUpId: userId },
+            attributes: [
+                [sequelize.fn('DATE_FORMAT', sequelize.col('date'), '%Y'), 'year'],  // Group by year
+                [sequelize.fn('sum', sequelize.col('amount')), 'totalExpense']
+            ],
+            group: 'year',
+            order: [['year', 'ASC']]
+        });
+        res.status(200).json({ yearlyExpenses });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+});
+
 //purchase premium 
 
 app.get('/buy-premium', authenticate, async (req, res, next) => {
